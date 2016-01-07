@@ -1,0 +1,18 @@
+From 178b8471cc0a8e69fd1d16235f48b8724910b16e Mon Sep 17 00:00:00 2001
+From: Jasper St. Pierre <jstpierre@mecheye.net>
+Date: Thu, 02 Jan 2014 18:26:48 +0000
+Subject: shell-global: Remove an explicit js-version set
+
+gjs's default js-version is already 1.8, and we're planning on removing
+this API in the future, in accordance with upstream.
+---
+--- a/src/shell-global.c
++++ b/src/shell-global.c
+@@ -287,7 +287,6 @@
+   search_path = g_strsplit (shell_js, ":", -1);
+   global->js_context = g_object_new (GJS_TYPE_CONTEXT,
+                                      "search-path", search_path,
+-                                     "js-version", "1.8",
+                                      "gc-notifications", TRUE,
+                                      NULL);
+   g_signal_connect (global->js_context, "gc", G_CALLBACK (shell_global_on_gc), global);

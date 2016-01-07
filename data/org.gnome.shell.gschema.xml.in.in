@@ -1,0 +1,232 @@
+<schemalist>
+  <schema id="org.gnome.shell" path="/org/gnome/shell/"
+          gettext-domain="@GETTEXT_PACKAGE@">
+    <key name="development-tools" type="b">
+      <default>true</default>
+      <_summary>
+        Enable internal tools useful for developers and testers from Alt-F2
+      </_summary>
+      <_description>
+        Allows access to internal debugging and monitoring tools
+        using the Alt-F2 dialog.
+      </_description>
+    </key>
+    <key name="enabled-extensions" type="as">
+      <default>[]</default>
+      <_summary>Uuids of extensions to enable</_summary>
+      <_description>
+        GNOME Shell extensions have a uuid property; this key lists extensions
+        which should be loaded. Any extension that wants to be loaded needs
+        to be in this list. You can also manipulate this list with the
+        EnableExtension and DisableExtension DBus methods on org.gnome.Shell.
+      </_description>
+    </key>
+    <key name="favorite-apps" type="as">
+      <default>[ 'epiphany.desktop', 'evolution.desktop', 'empathy.desktop', 'rhythmbox.desktop', 'shotwell.desktop', 'libreoffice-writer.desktop', 'nautilus.desktop', 'gnome-documents.desktop' ]</default>
+      <_summary>List of desktop file IDs for favorite applications</_summary>
+      <_description>
+        The applications corresponding to these identifiers
+        will be displayed in the favorites area.
+      </_description>
+    </key>
+    <key name="app-folder-categories" type="as">
+      <default>[ 'Utilities', 'Sundry' ]</default>
+      <_summary>List of categories that should be displayed as folders</_summary>
+      <_description>
+        Each category name in this list will be represented as folder in the
+        application view, rather than being displayed inline in the main view.
+      </_description>
+    </key>
+    <key name="app-picker-view" type="u">
+      <default>0</default>
+      <summary>App Picker View</summary>
+      <description>
+        Index of the currently selected view in the application picker.
+      </description>
+    </key>
+    <key name="command-history" type="as">
+      <default>[]</default>
+      <_summary>History for command (Alt-F2) dialog</_summary>
+    </key>
+    <key name="looking-glass-history" type="as">
+      <default>[]</default>
+      <_summary>History for the looking glass dialog</_summary>
+    </key>
+    <key name="always-show-log-out" type="b">
+      <default>false</default>
+      <_summary>Always show the 'Log out' menuitem in the user menu.</_summary>
+      <_description>
+        This key overrides the automatic hiding of the 'Log out'
+        menuitem in single-user, single-session situations.
+      </_description>
+    </key>
+    <key name="remember-mount-password" type="b">
+      <default>false</default>
+      <_summary>Whether to remember password for mounting encrypted or remote filesystems</_summary>
+      <_description>
+        The shell will request a password when an encrypted device or a
+        remote filesystem is mounted.  If the password can be saved for
+        future use a 'Remember Password' checkbox will be present.
+        This key sets the default state of the checkbox.
+      </_description>
+    </key>
+    <child name="calendar" schema="org.gnome.shell.calendar"/>
+    <child name="keybindings" schema="org.gnome.shell.keybindings"/>
+    <child name="keyboard" schema="org.gnome.shell.keyboard"/>
+  </schema>
+
+  <schema id="org.gnome.shell.calendar" path="/org/gnome/shell/calendar/"
+          gettext-domain="@GETTEXT_PACKAGE@">
+    <key name="show-weekdate" type="b">
+      <default>false</default>
+      <_summary>Show the week date in the calendar</_summary>
+      <_description>
+        If true, display the ISO week date in the calendar.
+      </_description>
+      </key>
+  </schema>
+
+  <schema id="org.gnome.shell.keybindings" path="/org/gnome/shell/keybindings/"
+          gettext-domain="@GETTEXT_PACKAGE@">
+    <key name="open-application-menu" type="as">
+      <default>["&lt;Super&gt;F10"]</default>
+      <_summary>Keybinding to open the application menu</_summary>
+      <_description>
+        Keybinding to open the application menu.
+      </_description>
+    </key>
+    <key name="toggle-application-view" type="as">
+      <default>["&lt;Super&gt;a"]</default>
+      <_summary>Keybinding to open the "Show Applications" view</_summary>
+      <_description>
+        Keybinding to open the "Show Applications" view of the Activities
+        Overview.
+      </_description>
+    </key>
+    <key name="toggle-overview" type="as">
+      <default>["&lt;Super&gt;s"]</default>
+      <_summary>Keybinding to open the overview</_summary>
+      <_description>
+        Keybinding to open the Activities Overview.
+      </_description>
+    </key>
+    <key name="toggle-message-tray" type="as">
+      <default>["&lt;Super&gt;m"]</default>
+      <_summary>Keybinding to toggle the visibility of the message tray</_summary>
+      <_description>
+        Keybinding to toggle the visibility of the message tray.
+      </_description>
+    </key>
+    <key name="focus-active-notification" type="as">
+      <default>["&lt;Super&gt;n"]</default>
+      <_summary>Keybinding to focus the active notification</_summary>
+      <_description>
+        Keybinding to focus the active notification.
+      </_description>
+    </key>
+  </schema>
+
+  <schema id="org.gnome.shell.keyboard" path="/org/gnome/shell/keyboard/"
+          gettext-domain="@GETTEXT_PACKAGE@">
+    <key name="keyboard-type" type="s">
+      <default>'touch'</default>
+      <_summary>Which keyboard to use</_summary>
+      <_description>
+        The type of keyboard to use.
+      </_description>
+    </key>
+  </schema>
+
+  <schema id="org.gnome.shell.app-switcher"
+          path="/org/gnome/shell/app-switcher/"
+          gettext-domain="@GETTEXT_PACKAGE@">
+    <key type="b" name="current-workspace-only">
+      <default>false</default>
+      <summary>Limit switcher to current workspace.</summary>
+      <description>
+	If true, only applications that have windows on the current workspace are shown in the switcher.
+	Otherwise, all applications are included.
+      </description>
+    </key>
+  </schema>
+
+  <enum id="org.gnome.shell.window-switcher.AppIconMode">
+    <value value="1" nick="thumbnail-only"/>
+    <value value="2" nick="app-icon-only"/>
+    <value value="3" nick="both"/>
+  </enum>
+  <schema id="org.gnome.shell.window-switcher"
+          path="/org/gnome/shell/window-switcher/"
+          gettext-domain="@GETTEXT_PACKAGE@">
+    <key name="app-icon-mode" enum="org.gnome.shell.window-switcher.AppIconMode">
+      <default>'both'</default>
+      <_summary>The application icon mode.</_summary>
+      <_description>
+	Configures how the windows are shown in the switcher. Valid possibilities
+	are 'thumbnail-only' (shows a thumbnail of the window), 'app-icon-only'
+	(shows only the application icon) or 'both'.
+      </_description>
+    </key>
+    <key type="b" name="current-workspace-only">
+      <default>true</default>
+      <summary>Limit switcher to current workspace.</summary>
+      <description>
+	If true, only windows from the current workspace are shown in the switcher.
+	Otherwise, all windows are included.
+      </description>
+    </key>
+  </schema>
+
+  <schema id="org.gnome.shell.overrides" path="/org/gnome/shell/overrides/"
+	  gettext-domain="@GETTEXT_PACKAGE@">
+    <key name="attach-modal-dialogs" type="b">
+      <default>true</default>
+      <_summary>Attach modal dialog to the parent window</_summary>
+      <_description>
+        This key overrides the key in org.gnome.mutter when running
+        GNOME Shell.
+      </_description>
+    </key>
+
+    <key name="button-layout" type="s">
+      <default>":close"</default>
+      <_summary>Arrangement of buttons on the titlebar</_summary>
+      <_description>
+        This key overrides the key in org.gnome.desktop.wm.preferences when
+        running GNOME Shell.
+      </_description>
+    </key>
+
+    <key name="edge-tiling" type="b">
+      <default>true</default>
+      <_summary>Enable edge tiling when dropping windows on screen edges</_summary>
+      <_description>
+        This key overrides the key in org.gnome.mutter when running GNOME Shell.
+      </_description>
+    </key>
+
+    <key name="dynamic-workspaces" type="b">
+      <default>true</default>
+      <_summary>Workspaces are managed dynamically</_summary>
+      <_description>
+        This key overrides the key in org.gnome.mutter when running GNOME Shell.
+      </_description>
+    </key>
+
+    <key name="workspaces-only-on-primary" type="b">
+      <default>true</default>
+      <_summary>Workspaces only on primary monitor</_summary>
+      <_description>
+        This key overrides the key in org.gnome.mutter when running GNOME Shell.
+      </_description>
+    </key>
+
+    <key name="focus-change-on-pointer-rest" type="b">
+      <default>true</default>
+      <_summary>Delay focus changes in mouse mode until the pointer stops moving</_summary>
+      <_description>
+        This key overrides the key in org.gnome.mutter when running GNOME Shell.
+      </_description>
+    </key>
+  </schema>
+</schemalist>

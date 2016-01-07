@@ -1,0 +1,50 @@
+From 7cff99c5ada332a1504992114c5e4d760aed44ef Mon Sep 17 00:00:00 2001
+From: Tim Lunn <tim@feathertop.org>
+Date: Mon, 6 Jan 2014 07:40:13 +1100
+Subject: [PATCH] Revert "shellDBus: Export the timestamp of shortcuts through
+ D-Bus"
+
+This reverts commit db497a2ecfccc8ad9284353826f32fc75ca78ecd.
+---
+ js/ui/shellDBus.js | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
+
+--- a/js/ui/shellDBus.js
++++ b/js/ui/shellDBus.js
+@@ -46,7 +46,6 @@
+ <signal name="AcceleratorActivated"> \
+     <arg name="action" type="u" /> \
+     <arg name="deviceid" type="u" /> \
+-    <arg name="timestamp" type="u" /> \
+ </signal> \
+ <property name="Mode" type="s" access="read" /> \
+ <property name="OverviewActive" type="b" access="readwrite" /> \
+@@ -87,8 +86,8 @@
+         this._grabbers = new Hash.Map();
+ 
+         global.display.connect('accelerator-activated', Lang.bind(this,
+-            function(display, action, deviceid, timestamp) {
+-                this._emitAcceleratorActivated(action, deviceid, timestamp);
++            function(display, action, deviceid) {
++                this._emitAcceleratorActivated(action, deviceid);
+             }));
+     },
+ 
+@@ -183,7 +182,7 @@
+         return invocation.return_value(GLib.Variant.new('(b)', [ungrabSucceeded]));
+     },
+ 
+-    _emitAcceleratorActivated: function(action, deviceid, timestamp) {
++    _emitAcceleratorActivated: function(action, deviceid) {
+         let destination = this._grabbedAccelerators.get(action);
+         if (!destination)
+             return;
+@@ -194,7 +193,7 @@
+                                this._dbusImpl.get_object_path(),
+                                info ? info.name : null,
+                                'AcceleratorActivated',
+-                               GLib.Variant.new('(uuu)', [action, deviceid, timestamp]));
++                               GLib.Variant.new('(uu)', [action, deviceid]));
+     },
+ 
+     _grabAcceleratorForSender: function(accelerator, flags, sender) {

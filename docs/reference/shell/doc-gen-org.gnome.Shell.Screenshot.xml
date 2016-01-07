@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+]>
+<refentry id="gdbus-org.gnome.Shell.Screenshot">
+  <refmeta>    <refentrytitle role="top_of_page" id="gdbus-interface-org-gnome-Shell-Screenshot.top_of_page">org.gnome.Shell.Screenshot</refentrytitle>
+  <indexterm zone="gdbus-interface-org-gnome-Shell-Screenshot.top_of_page"><primary sortas="org.gnome.Shell.Screenshot">org.gnome.Shell.Screenshot</primary></indexterm>
+  </refmeta>  <refnamediv>    <refname>org.gnome.Shell.Screenshot</refname>    <refpurpose>Screenshot interface</refpurpose>  </refnamediv>  <refsynopsisdiv role="synopsis">
+    <title role="synopsis.title">Methods</title>
+    <synopsis>
+<link linkend="gdbus-method-org-gnome-Shell-Screenshot.Screenshot">Screenshot</link>       (IN  b include_cursor,
+                  IN  b flash,
+                  IN  s filename,
+                  OUT b success,
+                  OUT s filename_used);
+<link linkend="gdbus-method-org-gnome-Shell-Screenshot.ScreenshotWindow">ScreenshotWindow</link> (IN  b include_frame,
+                  IN  b include_cursor,
+                  IN  b flash,
+                  IN  s filename,
+                  OUT b success,
+                  OUT s filename_used);
+<link linkend="gdbus-method-org-gnome-Shell-Screenshot.ScreenshotArea">ScreenshotArea</link>   (IN  i x,
+                  IN  i y,
+                  IN  i width,
+                  IN  i height,
+                  IN  b flash,
+                  IN  s filename,
+                  OUT b success,
+                  OUT s filename_used);
+<link linkend="gdbus-method-org-gnome-Shell-Screenshot.FlashArea">FlashArea</link>        (IN  i x,
+                  IN  i y,
+                  IN  i width,
+                  IN  i height);
+<link linkend="gdbus-method-org-gnome-Shell-Screenshot.SelectArea">SelectArea</link>       (OUT i x,
+                  OUT i y,
+                  OUT i width,
+                  OUT i height);
+</synopsis>
+  </refsynopsisdiv>
+<refsect1 role="desc" id="gdbus-interface-org-gnome-Shell-Screenshot">
+  <title role="desc.title">Description</title>
+  <para>      The interface used to capture pictures of the screen contents.
+</para>
+</refsect1>
+<refsect1 role="details" id="gdbus-methods-org.gnome.Shell.Screenshot">
+  <title role="details.title">Method Details</title>
+<refsect2 role="method" id="gdbus-method-org-gnome-Shell-Screenshot.Screenshot">
+  <title>The Screenshot() method</title>
+  <indexterm zone="gdbus-method-org-gnome-Shell-Screenshot.Screenshot"><primary sortas="org.gnome.Shell.Screenshot.Screenshot">org.gnome.Shell.Screenshot.Screenshot()</primary></indexterm>
+<programlisting>
+Screenshot (IN  b include_cursor,
+            IN  b flash,
+            IN  s filename,
+            OUT b success,
+            OUT s filename_used);
+</programlisting>
+<para>        Takes a screenshot of the whole screen and saves it
+        in <parameter>filename</parameter> as png image, it returns a boolean
+        indicating whether the operation was successful or not.
+        <parameter>filename</parameter> can either be an absolute path or a basename, in
+        which case the screenshot will be saved in the $XDG_PICTURES_DIR
+        or the home directory if it doesn't exist. The filename used
+        to save the screenshot will be returned in <parameter>filename_used</parameter>.
+</para>
+<variablelist role="params">
+<varlistentry>
+  <term><literal>IN b <parameter>include_cursor</parameter></literal>:</term>
+  <listitem><para>Whether to include the cursor image or not</para></listitem>
+</varlistentry>
+<varlistentry>
+  <term><literal>IN b <parameter>flash</parameter></literal>:</term>
+  <listitem><para>Whether to flash the screen or not</para></listitem>
+</varlistentry>
+<varlistentry>
+  <term><literal>IN s <parameter>filename</parameter></literal>:</term>
+  <listitem><para>The filename for the screenshot</para></listitem>
+</varlistentry>
+<varlistentry>
+  <term><literal>OUT b <parameter>success</parameter></literal>:</term>
+  <listitem><para>whether the screenshot was captured</para></listitem>
+</varlistentry>
+<varlistentry>
+  <term><literal>OUT s <parameter>filename_used</parameter></literal>:</term>
+  <listitem><para>the file where the screenshot was saved</para></listitem>
+</varlistentry>
+</variablelist>
+</refsect2>
+<refsect2 role="method" id="gdbus-method-org-gnome-Shell-Screenshot.ScreenshotWindow">
+  <title>The ScreenshotWindow() method</title>
+  <indexterm zone="gdbus-method-org-gnome-Shell-Screenshot.ScreenshotWindow"><primary sortas="org.gnome.Shell.Screenshot.ScreenshotWindow">org.gnome.Shell.Screenshot.ScreenshotWindow()</primary></indexterm>
+<programlisting>
+ScreenshotWindow (IN  b include_frame,
+                  IN  b include_cursor,
+                  IN  b flash,
+                  IN  s filename,
+                  OUT b success,
+                  OUT s filename_used);
+</programlisting>
+<para>        Takes a screenshot of the focused window (optionally omitting the frame)
+        and saves it in <parameter>filename</parameter> as png image, it returns a boolean
+        indicating whether the operation was successful or not.
+        <parameter>filename</parameter> can either be an absolute path or a basename, in
+        which case the screenshot will be saved in the $XDG_PICTURES_DIR
+        or the home directory if it doesn't exist. The filename used
+        to save the screenshot will be returned in <parameter>filename_used</parameter>.
+</para>
+<variablelist role="params">
+<varlistentry>
+  <term><literal>IN b <parameter>include_frame</parameter></literal>:</term>
+  <listitem><para>Whether to include the frame or not</para></listitem>
+</varlistentry>
+<varlistentry>
+  <term><literal>IN b <parameter>include_cursor</parameter></literal>:</term>
+  <listitem><para>Whether to include the cursor image or not</para></listitem>
+</varlistentry>
+<varlistentry>
+  <term><literal>IN b <parameter>flash</parameter></literal>:</term>
+  <listitem><para>Whether to flash the window area or not</para></listitem>
+</varlistentry>
+<varlistentry>
+  <term><literal>IN s <parameter>filename</parameter></literal>:</term>
+  <listitem><para>The filename for the screenshot</para></listitem>
+</varlistentry>
+<varlistentry>
+  <term><literal>OUT b <parameter>success</parameter></literal>:</term>
+  <listitem><para>whether the screenshot was captured</para></listitem>
+</varlistentry>
+<varlistentry>
+  <term><literal>OUT s <parameter>filename_used</parameter></literal>:</term>
+  <listitem><para>the file where the screenshot was saved</para></listitem>
+</varlistentry>
+</variablelist>
+</refsect2>
+<refsect2 role="method" id="gdbus-method-org-gnome-Shell-Screenshot.ScreenshotArea">
+  <title>The ScreenshotArea() method</title>
+  <indexterm zone="gdbus-method-org-gnome-Shell-Screenshot.ScreenshotArea"><primary sortas="org.gnome.Shell.Screenshot.ScreenshotArea">org.gnome.Shell.Screenshot.ScreenshotArea()</primary></indexterm>
+<programlisting>
+ScreenshotArea (IN  i x,
+                IN  i y,
+                IN  i width,
+                IN  i height,
+                IN  b flash,
+                IN  s filename,
+                OUT b success,
+                OUT s filename_used);
+</programlisting>
+<para>        Takes a screenshot of the passed in area and saves it
+        in <parameter>filename</parameter> as png image, it returns a boolean
+        indicating whether the operation was successful or not.
+        <parameter>filename</parameter> can either be an absolute path or a basename, in
+        which case the screenshot will be saved in the $XDG_PICTURES_DIR
+        or the home directory if it doesn't exist. The filename used
+        to save the screenshot will be returned in <parameter>filename_used</parameter>.
+</para>
+<variablelist role="params">
+<varlistentry>
+  <term><literal>IN i <parameter>x</parameter></literal>:</term>
+  <listitem><para>the X coordinate of the area to capture</para></listitem>
+</varlistentry>
+<varlistentry>
+  <term><literal>IN i <parameter>y</parameter></literal>:</term>
+  <listitem><para>the Y coordinate of the area to capture</para></listitem>
+</varlistentry>
+<varlistentry>
+  <term><literal>IN i <parameter>width</parameter></literal>:</term>
+  <listitem><para>the width of the area to capture</para></listitem>
+</varlistentry>
+<varlistentry>
+  <term><literal>IN i <parameter>height</parameter></literal>:</term>
+  <listitem><para>the height of the area to capture</para></listitem>
+</varlistentry>
+<varlistentry>
+  <term><literal>IN b <parameter>flash</parameter></literal>:</term>
+  <listitem><para>whether to flash the area or not</para></listitem>
+</varlistentry>
+<varlistentry>
+  <term><literal>IN s <parameter>filename</parameter></literal>:</term>
+  <listitem><para>the filename for the screenshot</para></listitem>
+</varlistentry>
+<varlistentry>
+  <term><literal>OUT b <parameter>success</parameter></literal>:</term>
+  <listitem><para>whether the screenshot was captured</para></listitem>
+</varlistentry>
+<varlistentry>
+  <term><literal>OUT s <parameter>filename_used</parameter></literal>:</term>
+  <listitem><para>the file where the screenshot was saved</para></listitem>
+</varlistentry>
+</variablelist>
+</refsect2>
+<refsect2 role="method" id="gdbus-method-org-gnome-Shell-Screenshot.FlashArea">
+  <title>The FlashArea() method</title>
+  <indexterm zone="gdbus-method-org-gnome-Shell-Screenshot.FlashArea"><primary sortas="org.gnome.Shell.Screenshot.FlashArea">org.gnome.Shell.Screenshot.FlashArea()</primary></indexterm>
+<programlisting>
+FlashArea (IN  i x,
+           IN  i y,
+           IN  i width,
+           IN  i height);
+</programlisting>
+<para>        Renders a flash spot effect in the specified rectangle of the screen.
+</para>
+<variablelist role="params">
+<varlistentry>
+  <term><literal>IN i <parameter>x</parameter></literal>:</term>
+  <listitem><para>the X coordinate of the area to flash</para></listitem>
+</varlistentry>
+<varlistentry>
+  <term><literal>IN i <parameter>y</parameter></literal>:</term>
+  <listitem><para>the Y coordinate of the area to flash</para></listitem>
+</varlistentry>
+<varlistentry>
+  <term><literal>IN i <parameter>width</parameter></literal>:</term>
+  <listitem><para>the width of the area to flash</para></listitem>
+</varlistentry>
+<varlistentry>
+  <term><literal>IN i <parameter>height</parameter></literal>:</term>
+  <listitem><para>the height of the area to flash</para></listitem>
+</varlistentry>
+</variablelist>
+</refsect2>
+<refsect2 role="method" id="gdbus-method-org-gnome-Shell-Screenshot.SelectArea">
+  <title>The SelectArea() method</title>
+  <indexterm zone="gdbus-method-org-gnome-Shell-Screenshot.SelectArea"><primary sortas="org.gnome.Shell.Screenshot.SelectArea">org.gnome.Shell.Screenshot.SelectArea()</primary></indexterm>
+<programlisting>
+SelectArea (OUT i x,
+            OUT i y,
+            OUT i width,
+            OUT i height);
+</programlisting>
+<para>        Interactively allows the user to select a rectangular area of
+        the screen, and returns its coordinates.
+</para>
+<variablelist role="params">
+<varlistentry>
+  <term><literal>OUT i <parameter>x</parameter></literal>:</term>
+  <listitem><para>the X coordinate of the selected area</para></listitem>
+</varlistentry>
+<varlistentry>
+  <term><literal>OUT i <parameter>y</parameter></literal>:</term>
+  <listitem><para>the Y coordinate of the selected area</para></listitem>
+</varlistentry>
+<varlistentry>
+  <term><literal>OUT i <parameter>width</parameter></literal>:</term>
+  <listitem><para>the width of the selected area</para></listitem>
+</varlistentry>
+<varlistentry>
+  <term><literal>OUT i <parameter>height</parameter></literal>:</term>
+  <listitem><para>the height of the selected area</para></listitem>
+</varlistentry>
+</variablelist>
+</refsect2>
+</refsect1>
+</refentry>
+

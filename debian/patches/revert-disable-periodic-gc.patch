@@ -1,0 +1,29 @@
+From 361da4a8a19ebc35642c6aa5358f435b2385f4f9 Mon Sep 17 00:00:00 2001
+From: Tim Lunn <tim@feathertop.org>
+Date: Mon, 29 Jul 2013 10:32:08 +1000
+Subject: [PATCH] Revert "global: don't run a garbage collection on tweeners
+ end"
+
+This reverts commit 6f605598de1eb4361ef912e85edb27a8b7b96b21.
+---
+
+diff --git a/src/shell-global.c b/src/shell-global.c
+index 74af6cd..c9e01d0 100644
+--- a/src/shell-global.c
++++ b/src/shell-global.c
+@@ -1434,6 +1434,13 @@ run_leisure_functions (gpointer data)
+   if (global->work_count > 0)
+     return FALSE;
+ 
++  /* Previously we called gjs_maybe_gc().  However, it simply doesn't
++   * trigger often enough.  Garbage collection is very fast here, so
++   * let's just aggressively GC.  This will help avoid both heap
++   * fragmentation, and the GC kicking in when we don't want it to.
++   */
++  gjs_context_gc (global->js_context);
++
+   /* No leisure closures, so we are done */
+   if (global->leisure_closures == NULL)
+     return FALSE;
+-- 
+1.8.3.2

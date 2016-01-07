@@ -1,0 +1,114 @@
+From cc8424314ab4822db15cd269e8ec2291bb9eedb5 Mon Sep 17 00:00:00 2001
+From: Tim Lunn <tim@feathertop.org>
+Date: Wed, 17 Jul 2013 09:01:08 +1000
+Subject: [PATCH] Revert "bluetooth: Port to BlueZ 5"
+
+This reverts commit dd74ea99a70fb0c4615b448670a4a1d0b843eab4.
+
+Revert "configure: Bump gnome-bluetooth requirement"
+
+This reverts commit c7fb65c78e48ed6f687008684a25cceefafb3992.
+---
+ configure.ac              |  2 +-
+ js/ui/status/bluetooth.js | 44 +++++---------------------------------------
+ 2 files changed, 6 insertions(+), 40 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 3d4915d..2ba51d7 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -109,7 +109,7 @@ PKG_CHECK_MODULES(DESKTOP_SCHEMAS, gsettings-desktop-schemas >= 3.7.4)
+ PKG_CHECK_MODULES(CARIBOU, caribou-1.0 >= 0.4.8)
+ 
+ AC_MSG_CHECKING([for bluetooth support])
+-PKG_CHECK_EXISTS([gnome-bluetooth-1.0 >= 3.9.0],
++PKG_CHECK_EXISTS([gnome-bluetooth-1.0 >= 3.1.0],
+         [BLUETOOTH_DIR=`$PKG_CONFIG --variable=applet_libdir gnome-bluetooth-1.0`
+ 	 BLUETOOTH_LIBS=`$PKG_CONFIG --variable=applet_libs gnome-bluetooth-1.0`
+ 	 AC_SUBST([BLUETOOTH_LIBS],["$BLUETOOTH_LIBS"])
+diff --git a/js/ui/status/bluetooth.js b/js/ui/status/bluetooth.js
+index bcc853b..f4610c7 100644
+--- a/js/ui/status/bluetooth.js
++++ b/js/ui/status/bluetooth.js
+@@ -86,7 +86,6 @@ const Indicator = new Lang.Class({
+         this._applet.connect('pincode-request', Lang.bind(this, this._pinRequest));
+         this._applet.connect('confirm-request', Lang.bind(this, this._confirmRequest));
+         this._applet.connect('auth-request', Lang.bind(this, this._authRequest));
+-        this._applet.connect('auth-service-request', Lang.bind(this, this._authServiceRequest));
+         this._applet.connect('cancel-request', Lang.bind(this, this._cancelRequest));
+     },
+ 
+@@ -293,14 +292,9 @@ const Indicator = new Lang.Class({
+         }
+     },
+ 
+-    _authRequest: function(applet, device_path, name, long_name) {
++    _authRequest: function(applet, device_path, name, long_name, uuid) {
+         this._ensureSource();
+-        this._source.notify(new AuthNotification(this._source, this._applet, device_path, name, long_name));
+-    },
+-
+-    _authServiceRequest: function(applet, device_path, name, long_name, uuid) {
+-        this._ensureSource();
+-        this._source.notify(new AuthServiceNotification(this._source, this._applet, device_path, name, long_name, uuid));
++        this._source.notify(new AuthNotification(this._source, this._applet, device_path, name, long_name, uuid));
+     },
+ 
+     _confirmRequest: function(applet, device_path, name, long_name, pin) {
+@@ -322,34 +316,6 @@ const AuthNotification = new Lang.Class({
+     Name: 'AuthNotification',
+     Extends: MessageTray.Notification,
+ 
+-    _init: function(source, applet, device_path, name, long_name) {
+-        this.parent(source,
+-                    _("Bluetooth"),
+-                    _("Authorization request from %s").format(name),
+-                    { customContent: true });
+-        this.setResident(true);
+-
+-        this._applet = applet;
+-        this._devicePath = device_path;
+-        this.addBody(_("Device %s wants to pair with this computer").format(long_name));
+-
+-        this.addButton('allow', _("Allow"));
+-        this.addButton('deny', _("Deny"));
+-
+-        this.connect('action-invoked', Lang.bind(this, function(self, action) {
+-            if (action == 'allow')
+-                this._applet.agent_reply_confirm(this._devicePath, true);
+-            else
+-                this._applet.agent_reply_confirm(this._devicePath, false);
+-            this.destroy();
+-        }));
+-    }
+-});
+-
+-const AuthServiceNotification = new Lang.Class({
+-    Name: 'AuthServiceNotification',
+-    Extends: MessageTray.Notification,
+-
+     _init: function(source, applet, device_path, name, long_name, uuid) {
+         this.parent(source,
+                     _("Bluetooth"),
+@@ -368,14 +334,14 @@ const AuthServiceNotification = new Lang.Class({
+         this.connect('action-invoked', Lang.bind(this, function(self, action) {
+             switch (action) {
+             case 'always-grant':
+-                this._applet.agent_reply_auth_service(this._devicePath, true, true);
++                this._applet.agent_reply_auth(this._devicePath, true, true);
+                 break;
+             case 'grant':
+-                this._applet.agent_reply_auth_service(this._devicePath, true, false);
++                this._applet.agent_reply_auth(this._devicePath, true, false);
+                 break;
+             case 'reject':
+             default:
+-                this._applet.agent_reply_auth_service(this._devicePath, false, false);
++                this._applet.agent_reply_auth(this._devicePath, false, false);
+             }
+             this.destroy();
+         }));
+-- 
+1.8.3.2
+
+

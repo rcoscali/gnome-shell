@@ -1,0 +1,15 @@
+--- a/js/ui/messageTray.js
++++ b/js/ui/messageTray.js
+@@ -1676,12 +1676,6 @@
+         tray.connect('source-added', Lang.bind(this, this._updateClearSensitivity));
+         tray.connect('source-removed', Lang.bind(this, this._updateClearSensitivity));
+         this._updateClearSensitivity();
+-
+-        let separator = new PopupMenu.PopupSeparatorMenuItem();
+-        this.addMenuItem(separator);
+-
+-        let settingsItem = this.addSettingsAction(_("Notification Settings"), 'gnome-notifications-panel.desktop');
+-        settingsItem.connect('activate', function() { tray.close(); });
+     },
+ 
+     _onStatusChanged: function(status) {

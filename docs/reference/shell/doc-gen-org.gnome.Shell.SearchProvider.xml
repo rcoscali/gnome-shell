@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+]>
+<refentry id="gdbus-org.gnome.Shell.SearchProvider">
+  <refmeta>    <refentrytitle role="top_of_page" id="gdbus-interface-org-gnome-Shell-SearchProvider.top_of_page">org.gnome.Shell.SearchProvider</refentrytitle>
+  <indexterm zone="gdbus-interface-org-gnome-Shell-SearchProvider.top_of_page"><primary sortas="org.gnome.Shell.SearchProvider">org.gnome.Shell.SearchProvider</primary></indexterm>
+  </refmeta>  <refnamediv>    <refname>org.gnome.Shell.SearchProvider</refname>    <refpurpose>Search provider interface</refpurpose>  </refnamediv>  <refsynopsisdiv role="synopsis">
+    <title role="synopsis.title">Methods</title>
+    <synopsis>
+<link linkend="gdbus-method-org-gnome-Shell-SearchProvider.GetInitialResultSet">GetInitialResultSet</link>   (IN  as     terms,
+                       OUT as     results);
+<link linkend="gdbus-method-org-gnome-Shell-SearchProvider.GetSubsearchResultSet">GetSubsearchResultSet</link> (IN  as     previous_results,
+                       IN  as     terms,
+                       OUT as     results);
+<link linkend="gdbus-method-org-gnome-Shell-SearchProvider.GetResultMetas">GetResultMetas</link>        (IN  as     identifiers,
+                       OUT aa{sv} metas);
+<link linkend="gdbus-method-org-gnome-Shell-SearchProvider.ActivateResult">ActivateResult</link>        (IN  s      identifier);
+</synopsis>
+  </refsynopsisdiv>
+<refsect1 role="desc" id="gdbus-interface-org-gnome-Shell-SearchProvider">
+  <title role="desc.title">Description</title>
+  <para>      The interface used for integrating into GNOME Shell's search
+      interface. This interface is deprecated, and org.gnome.Shell.SearchProvider2 should be used instead.
+</para>
+</refsect1>
+<refsect1 role="details" id="gdbus-methods-org.gnome.Shell.SearchProvider">
+  <title role="details.title">Method Details</title>
+<refsect2 role="method" id="gdbus-method-org-gnome-Shell-SearchProvider.GetInitialResultSet">
+  <title>The GetInitialResultSet() method</title>
+  <indexterm zone="gdbus-method-org-gnome-Shell-SearchProvider.GetInitialResultSet"><primary sortas="org.gnome.Shell.SearchProvider.GetInitialResultSet">org.gnome.Shell.SearchProvider.GetInitialResultSet()</primary></indexterm>
+<programlisting>
+GetInitialResultSet (IN  as terms,
+                     OUT as results);
+</programlisting>
+<para>        Called when the user first begins a search.
+</para>
+<variablelist role="params">
+<varlistentry>
+  <term><literal>IN as <parameter>terms</parameter></literal>:</term>
+  <listitem><para>Array of search terms, which the provider should treat as logical AND.</para></listitem>
+</varlistentry>
+<varlistentry>
+  <term><literal>OUT as <parameter>results</parameter></literal>:</term>
+  <listitem><para>An array of result identifier strings representing items which match the given search terms. Identifiers must be unique within the provider's domain, but other than that may be chosen freely by the provider.</para></listitem>
+</varlistentry>
+</variablelist>
+</refsect2>
+<refsect2 role="method" id="gdbus-method-org-gnome-Shell-SearchProvider.GetSubsearchResultSet">
+  <title>The GetSubsearchResultSet() method</title>
+  <indexterm zone="gdbus-method-org-gnome-Shell-SearchProvider.GetSubsearchResultSet"><primary sortas="org.gnome.Shell.SearchProvider.GetSubsearchResultSet">org.gnome.Shell.SearchProvider.GetSubsearchResultSet()</primary></indexterm>
+<programlisting>
+GetSubsearchResultSet (IN  as previous_results,
+                       IN  as terms,
+                       OUT as results);
+</programlisting>
+<para>        Called when a search is performed which is a "subsearch" of
+        the previous search, e.g. the method may return less results, but
+        not more or different results.
+</para><para>        This allows search providers to only search through the previous
+        result set, rather than possibly performing a full re-query.
+</para>
+<variablelist role="params">
+<varlistentry>
+  <term><literal>IN as <parameter>previous_results</parameter></literal>:</term>
+  <listitem><para>Array of results previously returned by GetInitialResultSet().</para></listitem>
+</varlistentry>
+<varlistentry>
+  <term><literal>IN as <parameter>terms</parameter></literal>:</term>
+  <listitem><para>Array of updated search terms, which the provider should treat as logical AND.</para></listitem>
+</varlistentry>
+<varlistentry>
+  <term><literal>OUT as <parameter>results</parameter></literal>:</term>
+  <listitem><para>An array of result identifier strings representing items which match the given search terms. Identifiers must be unique within the provider's domain, but other than that may be chosen freely by the provider.</para></listitem>
+</varlistentry>
+</variablelist>
+</refsect2>
+<refsect2 role="method" id="gdbus-method-org-gnome-Shell-SearchProvider.GetResultMetas">
+  <title>The GetResultMetas() method</title>
+  <indexterm zone="gdbus-method-org-gnome-Shell-SearchProvider.GetResultMetas"><primary sortas="org.gnome.Shell.SearchProvider.GetResultMetas">org.gnome.Shell.SearchProvider.GetResultMetas()</primary></indexterm>
+<programlisting>
+GetResultMetas (IN  as     identifiers,
+                OUT aa{sv} metas);
+</programlisting>
+<para>        Return an array of meta data used to display each given result
+</para>
+<variablelist role="params">
+<varlistentry>
+  <term><literal>IN as <parameter>identifiers</parameter></literal>:</term>
+  <listitem><para>An array of result identifiers as returned by GetInitialResultSet() or GetSubsearchResultSet()</para></listitem>
+</varlistentry>
+<varlistentry>
+  <term><literal>OUT aa{sv} <parameter>metas</parameter></literal>:</term>
+  <listitem><para>A dictionary describing the given search result, containing a human-readable 'name' (string), along with the result identifier this meta is for, 'id' (string). Optionally, either 'gicon' (a serialized GIcon) or 'icon-data' (raw image data as (iiibiiay) - width, height, rowstride, has-alpha, bits per sample, channels, data) can be specified if the result can be better served with a thumbnail of the content (such as with images). A 'description' field (string) may also be specified if more context would help the user find the desired result.</para></listitem>
+</varlistentry>
+</variablelist>
+</refsect2>
+<refsect2 role="method" id="gdbus-method-org-gnome-Shell-SearchProvider.ActivateResult">
+  <title>The ActivateResult() method</title>
+  <indexterm zone="gdbus-method-org-gnome-Shell-SearchProvider.ActivateResult"><primary sortas="org.gnome.Shell.SearchProvider.ActivateResult">org.gnome.Shell.SearchProvider.ActivateResult()</primary></indexterm>
+<programlisting>
+ActivateResult (IN  s identifier);
+</programlisting>
+<para>        Called when the users chooses a given result. The result should
+        be displayed in the application associated with the corresponding
+        provider.
+</para><para>        This method is deprecated, and providers should implement ActivateResult2()
+        instead.
+</para>
+<variablelist role="params">
+<varlistentry>
+  <term><literal>IN s <parameter>identifier</parameter></literal>:</term>
+  <listitem><para>A result identifier as returned by GetInitialResultSet() or GetSubsearchResultSet()</para></listitem>
+</varlistentry>
+</variablelist>
+</refsect2>
+</refsect1>
+</refentry>
+

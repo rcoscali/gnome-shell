@@ -1,0 +1,1609 @@
+From b908a3d70af279caad71a7ad87a301621b08271f Mon Sep 17 00:00:00 2001
+From: Tim Lunn <tim@feathertop.org>
+Date: Thu, 24 Oct 2013 21:51:58 +0000
+Subject: Stringify the xml definitions for E4X removal
+
+https://bugzilla.gnome.org/show_bug.cgi?id=691409
+---
+--- a/js/extensionPrefs/main.js
++++ b/js/extensionPrefs/main.js
+@@ -13,13 +13,15 @@
+ const Config = imports.misc.config;
+ const ExtensionUtils = imports.misc.extensionUtils;
+ 
+-const GnomeShellIface = <interface name="org.gnome.Shell.Extensions">
+-<signal name="ExtensionStatusChanged">
+-    <arg type="s" name="uuid"/>
+-    <arg type="i" name="state"/>
+-    <arg type="s" name="error"/>
+-</signal>
+-</interface>;
++const GnomeShellIface = '<node> \
++<interface name="org.gnome.Shell.Extensions"> \
++<signal name="ExtensionStatusChanged"> \
++    <arg type="s" name="uuid"/> \
++    <arg type="i" name="state"/> \
++    <arg type="s" name="error"/> \
++</signal> \
++</interface> \
++</node>';
+ 
+ const GnomeShellProxy = Gio.DBusProxy.makeProxyWrapper(GnomeShellIface);
+ 
+--- a/js/gdm/fingerprint.js
++++ b/js/gdm/fingerprint.js
+@@ -5,11 +5,13 @@
+ const Shell = imports.gi.Shell;
+ const Signals = imports.signals;
+ 
+-const FprintManagerIface = <interface name='net.reactivated.Fprint.Manager'>
+-<method name='GetDefaultDevice'>
+-    <arg type='o' direction='out' />
+-</method>
+-</interface>;
++const FprintManagerIface = '<node> \
++<interface name="net.reactivated.Fprint.Manager"> \
++<method name="GetDefaultDevice"> \
++    <arg type="o" direction="out" /> \
++</method> \
++</interface> \
++</node>';
+ 
+ const FprintManagerInfo = Gio.DBusInterfaceInfo.new_for_xml(FprintManagerIface);
+ 
+--- a/js/gdm/oVirt.js
++++ b/js/gdm/oVirt.js
+@@ -4,11 +4,13 @@
+ const Lang = imports.lang;
+ const Signals = imports.signals;
+ 
+-const OVirtCredentialsIface = <interface name='org.ovirt.vdsm.Credentials'>
+-<signal name="UserAuthenticated">
+-    <arg type="s" name="token"/>
+-</signal>
+-</interface>;
++const OVirtCredentialsIface = '<node> \
++<interface name="org.ovirt.vdsm.Credentials"> \
++<signal name="UserAuthenticated"> \
++    <arg type="s" name="token"/> \
++</signal> \
++</interface> \
++</node>';
+ 
+ const OVirtCredentialsInfo = Gio.DBusInterfaceInfo.new_for_xml(OVirtCredentialsIface);
+ 
+--- a/js/gdm/realmd.js
++++ b/js/gdm/realmd.js
+@@ -5,52 +5,58 @@
+ const Shell = imports.gi.Shell;
+ const Signals = imports.signals;
+ 
+-const ProviderIface = <interface name='org.freedesktop.realmd.Provider'>
+-    <property name="Name" type="s" access="read"/>
+-    <property name="Version" type="s" access="read"/>
+-    <property name="Realms" type="ao" access="read"/>
+-    <method name="Discover">
+-        <arg name="string" type="s" direction="in"/>
+-        <arg name="options" type="a{sv}" direction="in"/>
+-        <arg name="relevance" type="i" direction="out"/>
+-        <arg name="realm" type="ao" direction="out"/>
+-    </method>
+-</interface>;
++const ProviderIface = '<node> \
++<interface name="org.freedesktop.realmd.Provider"> \
++    <property name="Name" type="s" access="read"/> \
++    <property name="Version" type="s" access="read"/> \
++    <property name="Realms" type="ao" access="read"/> \
++    <method name="Discover"> \
++        <arg name="string" type="s" direction="in"/> \
++        <arg name="options" type="a{sv}" direction="in"/> \
++        <arg name="relevance" type="i" direction="out"/> \
++        <arg name="realm" type="ao" direction="out"/> \
++    </method> \
++</interface> \
++</node>';
+ const Provider = Gio.DBusProxy.makeProxyWrapper(ProviderIface);
+ 
+-const ServiceIface = <interface name="org.freedesktop.realmd.Service">
+-    <method name="Cancel">
+-        <arg name="operation" type="s" direction="in"/>
+-    </method>
+-    <method name="Release" />
+-    <method name="SetLocale">
+-        <arg name="locale" type="s" direction="in"/>
+-    </method>
+-    <signal name="Diagnostics">
+-        <arg name="data" type="s"/>
+-        <arg name="operation" type="s"/>
+-    </signal>
+-</interface>;
++const ServiceIface = '<node> \
++<interface name="org.freedesktop.realmd.Service"> \
++    <method name="Cancel"> \
++        <arg name="operation" type="s" direction="in"/> \
++    </method> \
++    <method name="Release" /> \
++    <method name="SetLocale"> \
++        <arg name="locale" type="s" direction="in"/> \
++    </method> \
++    <signal name="Diagnostics"> \
++        <arg name="data" type="s"/> \
++        <arg name="operation" type="s"/> \
++    </signal> \
++</interface> \
++</node>';
+ const Service = Gio.DBusProxy.makeProxyWrapper(ServiceIface);
+ 
+-const RealmIface = <interface name="org.freedesktop.realmd.Realm">
+-    <property name="Name" type="s" access="read"/>
+-    <property name="Configured" type="s" access="read"/>
+-    <property name="Details" type="a(ss)" access="read"/>
+-    <property name="LoginFormats" type="as" access="read"/>
+-    <property name="LoginPolicy" type="s" access="read"/>
+-    <property name="PermittedLogins" type="as" access="read"/>
+-    <property name="SupportedInterfaces" type="as" access="read"/>
+-    <method name="ChangeLoginPolicy">
+-        <arg name="login_policy" type="s" direction="in"/>
+-        <arg name="permitted_add" type="as" direction="in"/>
+-        <arg name="permitted_remove" type="as" direction="in"/>
+-        <arg name="options" type="a{sv}" direction="in"/>
+-    </method>
+-    <method name="Deconfigure">
+-        <arg name="options" type="a{sv}" direction="in"/>
+-    </method>
+-</interface>;
++const RealmIface = '<node> \
++<interface name="org.freedesktop.realmd.Realm"> \
++    <property name="Name" type="s" access="read"/> \
++    <property name="Configured" type="s" access="read"/> \
++    <property name="Details" type="a(ss)" access="read"/> \
++    <property name="LoginFormats" type="as" access="read"/> \
++    <property name="LoginPolicy" type="s" access="read"/> \
++    <property name="PermittedLogins" type="as" access="read"/> \
++    <property name="SupportedInterfaces" type="as" access="read"/> \
++    <method name="ChangeLoginPolicy"> \
++        <arg name="login_policy" type="s" direction="in"/> \
++        <arg name="permitted_add" type="as" direction="in"/> \
++        <arg name="permitted_remove" type="as" direction="in"/> \
++        <arg name="options" type="a{sv}" direction="in"/> \
++    </method> \
++    <method name="Deconfigure"> \
++        <arg name="options" type="a{sv}" direction="in"/> \
++    </method> \
++</interface> \
++</node>';
+ const Realm = Gio.DBusProxy.makeProxyWrapper(RealmIface);
+ 
+ const Manager = new Lang.Class({
+--- a/js/misc/gnomeSession.js
++++ b/js/misc/gnomeSession.js
+@@ -4,15 +4,17 @@
+ const Lang = imports.lang;
+ const Signals = imports.signals;
+ 
+-const PresenceIface = <interface name="org.gnome.SessionManager.Presence">
+-<method name="SetStatus">
+-    <arg type="u" direction="in"/>
+-</method>
+-<property name="status" type="u" access="readwrite"/>
+-<signal name="StatusChanged">
+-    <arg type="u" direction="out"/>
+-</signal>
+-</interface>;
++const PresenceIface = '<node> \
++<interface name="org.gnome.SessionManager.Presence"> \
++<method name="SetStatus"> \
++    <arg type="u" direction="in"/> \
++</method> \
++<property name="status" type="u" access="readwrite"/> \
++<signal name="StatusChanged"> \
++    <arg type="u" direction="out"/> \
++</signal> \
++</interface> \
++</node>';
+ 
+ const PresenceStatus = {
+     AVAILABLE: 0,
+@@ -30,14 +32,16 @@
+ // Note inhibitors are immutable objects, so they don't
+ // change at runtime (changes always come in the form
+ // of new inhibitors)
+-const InhibitorIface = <interface name="org.gnome.SessionManager.Inhibitor">
+-<method name="GetAppId">
+-    <arg type="s" direction="out" />
+-</method>
+-<method name="GetReason">
+-    <arg type="s" direction="out" />
+-</method>
+-</interface>;
++const InhibitorIface = '<node> \
++<interface name="org.gnome.SessionManager.Inhibitor"> \
++<method name="GetAppId"> \
++    <arg type="s" direction="out" /> \
++</method> \
++<method name="GetReason"> \
++    <arg type="s" direction="out" /> \
++</method> \
++</interface> \
++</node>';
+ 
+ var InhibitorProxy = Gio.DBusProxy.makeProxyWrapper(InhibitorIface);
+ function Inhibitor(objectPath, initCallback, cancellable) {
+@@ -45,27 +49,29 @@
+ }
+ 
+ // Not the full interface, only the methods we use
+-const SessionManagerIface = <interface name="org.gnome.SessionManager">
+-<method name="Logout">
+-    <arg type="u" direction="in" />
+-</method>
+-<method name="Shutdown" />
+-<method name="Reboot" />
+-<method name="CanShutdown">
+-    <arg type="b" direction="out" />
+-</method>
+-<method name="IsInhibited">
+-    <arg type="u" direction="in" />
+-    <arg type="b" direction="out" />
+-</method>
+-<property name="SessionIsActive" type="b" access="read"/>
+-<signal name="InhibitorAdded">
+-    <arg type="o" direction="out"/>
+-</signal>
+-<signal name="InhibitorRemoved">
+-    <arg type="o" direction="out"/>
+-</signal>
+-</interface>;
++const SessionManagerIface = '<node> \
++<interface name="org.gnome.SessionManager"> \
++<method name="Logout"> \
++    <arg type="u" direction="in" /> \
++</method> \
++<method name="Shutdown" /> \
++<method name="Reboot" /> \
++<method name="CanShutdown"> \
++    <arg type="b" direction="out" /> \
++</method> \
++<method name="IsInhibited"> \
++    <arg type="u" direction="in" /> \
++    <arg type="b" direction="out" /> \
++</method> \
++<property name="SessionIsActive" type="b" access="read"/> \
++<signal name="InhibitorAdded"> \
++    <arg type="o" direction="out"/> \
++</signal> \
++<signal name="InhibitorRemoved"> \
++    <arg type="o" direction="out"/> \
++</signal> \
++</interface> \
++</node>';
+ 
+ var SessionManagerProxy = Gio.DBusProxy.makeProxyWrapper(SessionManagerIface);
+ function SessionManager(initCallback, cancellable) {
+--- a/js/misc/loginManager.js
++++ b/js/misc/loginManager.js
+@@ -7,58 +7,66 @@
+ const Shell = imports.gi.Shell;
+ const Signals = imports.signals;
+ 
+-const SystemdLoginManagerIface = <interface name='org.freedesktop.login1.Manager'>
+-<method name='Suspend'>
+-    <arg type='b' direction='in'/>
+-</method>
+-<method name='CanSuspend'>
+-    <arg type='s' direction='out'/>
+-</method>
+-<method name='Inhibit'>
+-    <arg type='s' direction='in'/>
+-    <arg type='s' direction='in'/>
+-    <arg type='s' direction='in'/>
+-    <arg type='s' direction='in'/>
+-    <arg type='h' direction='out'/>
+-</method>
+-<method name='GetSession'>
+-    <arg type='s' direction='in'/>
+-    <arg type='o' direction='out'/>
+-</method>
+-<method name='ListSessions'>
+-    <arg name='sessions' type='a(susso)' direction='out'/>
+-</method>
+-<signal name='PrepareForSleep'>
+-    <arg type='b' direction='out'/>
+-</signal>
+-</interface>;
+-
+-const SystemdLoginSessionIface = <interface name='org.freedesktop.login1.Session'>
+-<signal name='Lock' />
+-<signal name='Unlock' />
+-</interface>;
++const SystemdLoginManagerIface = '<node> \
++<interface name="org.freedesktop.login1.Manager"> \
++<method name="Suspend"> \
++    <arg type="b" direction="in"/> \
++</method> \
++<method name="CanSuspend"> \
++    <arg type="s" direction="out"/> \
++</method> \
++<method name="Inhibit"> \
++    <arg type="s" direction="in"/> \
++    <arg type="s" direction="in"/> \
++    <arg type="s" direction="in"/> \
++    <arg type="s" direction="in"/> \
++    <arg type="h" direction="out"/> \
++</method> \
++<method name="GetSession"> \
++    <arg type="s" direction="in"/> \
++    <arg type="o" direction="out"/> \
++</method> \
++<method name="ListSessions"> \
++    <arg name="sessions" type="a(susso)" direction="out"/> \
++</method> \
++<signal name="PrepareForSleep"> \
++    <arg type="b" direction="out"/> \
++</signal> \
++</interface> \
++</node>';
++
++const SystemdLoginSessionIface = '<node> \
++<interface name="org.freedesktop.login1.Session"> \
++<signal name="Lock" /> \
++<signal name="Unlock" /> \
++</interface> \
++</node>';
+ 
+ const SystemdLoginManager = Gio.DBusProxy.makeProxyWrapper(SystemdLoginManagerIface);
+ const SystemdLoginSession = Gio.DBusProxy.makeProxyWrapper(SystemdLoginSessionIface);
+ 
+-const ConsoleKitManagerIface = <interface name='org.freedesktop.ConsoleKit.Manager'>
+-<method name='CanRestart'>
+-    <arg type='b' direction='out'/>
+-</method>
+-<method name='CanStop'>
+-    <arg type='b' direction='out'/>
+-</method>
+-<method name='Restart' />
+-<method name='Stop' />
+-<method name='GetCurrentSession'>
+-    <arg type='o' direction='out' />
+-</method>
+-</interface>;
+-
+-const ConsoleKitSessionIface = <interface name='org.freedesktop.ConsoleKit.Session'>
+-<signal name='Lock' />
+-<signal name='Unlock' />
+-</interface>;
++const ConsoleKitManagerIface = '<node> \
++<interface name="org.freedesktop.ConsoleKit.Manager"> \
++<method name="CanRestart"> \
++    <arg type="b" direction="out"/> \
++</method> \
++<method name="CanStop"> \
++    <arg type="b" direction="out"/> \
++</method> \
++<method name="Restart" /> \
++<method name="Stop" /> \
++<method name="GetCurrentSession"> \
++    <arg type="o" direction="out" /> \
++</method> \
++</interface> \
++</node>';
++
++const ConsoleKitSessionIface = '<node> \
++<interface name="org.freedesktop.ConsoleKit.Session"> \
++<signal name="Lock" /> \
++<signal name="Unlock" /> \
++</interface> \
++</node>';
+ 
+ const ConsoleKitSession = Gio.DBusProxy.makeProxyWrapper(ConsoleKitSessionIface);
+ const ConsoleKitManager = Gio.DBusProxy.makeProxyWrapper(ConsoleKitManagerIface);
+--- a/js/misc/modemManager.js
++++ b/js/misc/modemManager.js
+@@ -92,37 +92,41 @@
+ // The following are not the complete interfaces, just the methods we need
+ // (or may need in the future)
+ 
+-const ModemGsmNetworkInterface = <interface name="org.freedesktop.ModemManager.Modem.Gsm.Network">
+-<method name="GetRegistrationInfo">
+-    <arg type="(uss)" direction="out" />
+-</method>
+-<method name="GetSignalQuality">
+-    <arg type="u" direction="out" />
+-</method>
+-<property name="AccessTechnology" type="u" access="read" />
+-<signal name="SignalQuality">
+-    <arg type="u" direction="out" />
+-</signal>
+-<signal name="RegistrationInfo">
+-    <arg type="u" direction="out" />
+-    <arg type="s" direction="out" />
+-    <arg type="s" direction="out" />
+-</signal>
+-</interface>;
++const ModemGsmNetworkInterface = '<node> \
++<interface name="org.freedesktop.ModemManager.Modem.Gsm.Network"> \
++<method name="GetRegistrationInfo"> \
++    <arg type="(uss)" direction="out" /> \
++</method> \
++<method name="GetSignalQuality"> \
++    <arg type="u" direction="out" /> \
++</method> \
++<property name="AccessTechnology" type="u" access="read" /> \
++<signal name="SignalQuality"> \
++    <arg type="u" direction="out" /> \
++</signal> \
++<signal name="RegistrationInfo"> \
++    <arg type="u" direction="out" /> \
++    <arg type="s" direction="out" /> \
++    <arg type="s" direction="out" /> \
++</signal> \
++</interface> \
++</node>';
+ 
+ const ModemGsmNetworkProxy = Gio.DBusProxy.makeProxyWrapper(ModemGsmNetworkInterface);
+ 
+-const ModemCdmaInterface = <interface name="org.freedesktop.ModemManager.Modem.Cdma">
+-<method name="GetSignalQuality">
+-    <arg type="u" direction="out" />
+-</method>
+-<method name="GetServingSystem">
+-    <arg type="(usu)" direction="out" />
+-</method>
+-<signal name="SignalQuality">
+-    <arg type="u" direction="out" />
+-</signal>
+-</interface>;
++const ModemCdmaInterface = '<node> \
++<interface name="org.freedesktop.ModemManager.Modem.Cdma"> \
++<method name="GetSignalQuality"> \
++    <arg type="u" direction="out" /> \
++</method> \
++<method name="GetServingSystem"> \
++    <arg type="(usu)" direction="out" /> \
++</method> \
++<signal name="SignalQuality"> \
++    <arg type="u" direction="out" /> \
++</signal> \
++</interface> \
++</node>';
+ 
+ const ModemCdmaProxy = Gio.DBusProxy.makeProxyWrapper(ModemCdmaInterface);
+ 
+@@ -218,20 +222,26 @@
+ // Support for the new ModemManager1 interface (MM >= 0.7)
+ //------------------------------------------------------------------------------
+ 
+-const BroadbandModemInterface = <interface name="org.freedesktop.ModemManager1.Modem">
+-<property name="SignalQuality" type="(ub)" access="read" />
+-</interface>;
++const BroadbandModemInterface = '<node> \
++<interface name="org.freedesktop.ModemManager1.Modem"> \
++<property name="SignalQuality" type="(ub)" access="read" /> \
++</interface> \
++</node>';
+ const BroadbandModemProxy = Gio.DBusProxy.makeProxyWrapper(BroadbandModemInterface);
+ 
+-const BroadbandModem3gppInterface = <interface name="org.freedesktop.ModemManager1.Modem.Modem3gpp">
+-<property name="OperatorCode" type="s" access="read" />
+-<property name="OperatorName" type="s" access="read" />
+-</interface>;
++const BroadbandModem3gppInterface = '<node> \
++<interface name="org.freedesktop.ModemManager1.Modem.Modem3gpp"> \
++<property name="OperatorCode" type="s" access="read" /> \
++<property name="OperatorName" type="s" access="read" /> \
++</interface> \
++</node>';
+ const BroadbandModem3gppProxy = Gio.DBusProxy.makeProxyWrapper(BroadbandModem3gppInterface);
+ 
+-const BroadbandModemCdmaInterface = <interface name="org.freedesktop.ModemManager1.Modem.ModemCdma">
+-<property name="Sid" type="u" access="read" />
+-</interface>;
++const BroadbandModemCdmaInterface = '<node> \
++<interface name="org.freedesktop.ModemManager1.Modem.ModemCdma"> \
++<property name="Sid" type="u" access="read" /> \
++</interface> \
++</node>';
+ const BroadbandModemCdmaProxy = Gio.DBusProxy.makeProxyWrapper(BroadbandModemCdmaInterface);
+ 
+ const BroadbandModem = new Lang.Class({
+--- a/js/misc/objectManager.js
++++ b/js/misc/objectManager.js
+@@ -8,19 +8,21 @@
+ 
+ // Specified in the D-Bus specification here:
+ // http://dbus.freedesktop.org/doc/dbus-specification.html#standard-interfaces-objectmanager
+-const ObjectManagerIface = <interface name="org.freedesktop.DBus.ObjectManager">
+-  <method name="GetManagedObjects">
+-    <arg name="objects" type="a{oa{sa{sv}}}" direction="out"/>
+-  </method>
+-  <signal name="InterfacesAdded">
+-    <arg name="objectPath" type="o"/>
+-    <arg name="interfaces" type="a{sa{sv}}" />
+-  </signal>
+-  <signal name="InterfacesRemoved">
+-    <arg name="objectPath" type="o"/>
+-    <arg name="interfaces" type="as" />
+-  </signal>
+-</interface>;
++const ObjectManagerIface = '<node> \
++<interface name="org.freedesktop.DBus.ObjectManager"> \
++  <method name="GetManagedObjects"> \
++    <arg name="objects" type="a{oa{sa{sv}}}" direction="out"/> \
++  </method> \
++  <signal name="InterfacesAdded"> \
++    <arg name="objectPath" type="o"/> \
++    <arg name="interfaces" type="a{sa{sv}}" /> \
++  </signal> \
++  <signal name="InterfacesRemoved"> \
++    <arg name="objectPath" type="o"/> \
++    <arg name="interfaces" type="as" /> \
++  </signal> \
++</interface> \
++</node>';
+ 
+ const ObjectManagerInfo = Gio.DBusInterfaceInfo.new_for_xml(ObjectManagerIface);
+ 
+--- a/js/misc/smartcardManager.js
++++ b/js/misc/smartcardManager.js
+@@ -7,12 +7,14 @@
+ 
+ const ObjectManager = imports.misc.objectManager;
+ 
+-const SmartcardTokenIface = <interface name="org.gnome.SettingsDaemon.Smartcard.Token">
+-  <property name="Name" type="s" access="read"/>
+-  <property name="Driver" type="o" access="read"/>
+-  <property name="IsInserted" type="b" access="read"/>
+-  <property name="UsedToLogin" type="b" access="read"/>
+-</interface>;
++const SmartcardTokenIface = '<node> \
++<interface name="org.gnome.SettingsDaemon.Smartcard.Token"> \
++  <property name="Name" type="s" access="read"/> \
++  <property name="Driver" type="o" access="read"/> \
++  <property name="IsInserted" type="b" access="read"/> \
++  <property name="UsedToLogin" type="b" access="read"/> \
++</interface> \
++</node>';
+ 
+ let _smartcardManager = null;
+ 
+--- a/js/ui/calendar.js
++++ b/js/ui/calendar.js
+@@ -190,16 +190,18 @@
+ });
+ Signals.addSignalMethods(EmptyEventSource.prototype);
+ 
+-const CalendarServerIface = <interface name="org.gnome.Shell.CalendarServer">
+-<method name="GetEvents">
+-    <arg type="x" direction="in" />
+-    <arg type="x" direction="in" />
+-    <arg type="b" direction="in" />
+-    <arg type="a(sssbxxa{sv})" direction="out" />
+-</method>
+-<property name="HasCalendars" type="b" access="read" />
+-<signal name="Changed" />
+-</interface>;
++const CalendarServerIface = '<node> \
++<interface name="org.gnome.Shell.CalendarServer"> \
++<method name="GetEvents"> \
++    <arg type="x" direction="in" /> \
++    <arg type="x" direction="in" /> \
++    <arg type="b" direction="in" /> \
++    <arg type="a(sssbxxa{sv})" direction="out" /> \
++</method> \
++<property name="HasCalendars" type="b" access="read" /> \
++<signal name="Changed" /> \
++</interface> \
++</node>';
+ 
+ const CalendarServerInfo  = Gio.DBusInterfaceInfo.new_for_xml(CalendarServerIface);
+ 
+--- a/js/ui/components/autorunManager.js
++++ b/js/ui/components/autorunManager.js
+@@ -75,12 +75,14 @@
+ 
+ /******************************************/
+ 
+-const HotplugSnifferIface = <interface name="org.gnome.Shell.HotplugSniffer">
+-<method name="SniffURI">
+-    <arg type="s" direction="in" />
+-    <arg type="as" direction="out" />
+-</method>
+-</interface>;
++const HotplugSnifferIface = '<node> \
++<interface name="org.gnome.Shell.HotplugSniffer"> \
++<method name="SniffURI"> \
++    <arg type="s" direction="in" /> \
++    <arg type="as" direction="out" /> \
++</method> \
++</interface> \
++</node>';
+ 
+ const HotplugSnifferProxy = Gio.DBusProxy.makeProxyWrapper(HotplugSnifferIface);
+ function HotplugSniffer() {
+--- a/js/ui/endSessionDialog.js
++++ b/js/ui/endSessionDialog.js
+@@ -43,20 +43,22 @@
+ 
+ const GSM_SESSION_MANAGER_LOGOUT_FORCE = 2;
+ 
+-const EndSessionDialogIface = <interface name="org.gnome.SessionManager.EndSessionDialog">
+-<method name="Open">
+-    <arg type="u" direction="in" />
+-    <arg type="u" direction="in" />
+-    <arg type="u" direction="in" />
+-    <arg type="ao" direction="in" />
+-</method>
+-<method name="Close" />
+-<signal name="ConfirmedLogout" />
+-<signal name="ConfirmedReboot" />
+-<signal name="ConfirmedShutdown" />
+-<signal name="Canceled" />
+-<signal name="Closed" />
+-</interface>;
++const EndSessionDialogIface = '<node> \
++<interface name="org.gnome.SessionManager.EndSessionDialog"> \
++<method name="Open"> \
++    <arg type="u" direction="in" /> \
++    <arg type="u" direction="in" /> \
++    <arg type="u" direction="in" /> \
++    <arg type="ao" direction="in" /> \
++</method> \
++<method name="Close" /> \
++<signal name="ConfirmedLogout" /> \
++<signal name="ConfirmedReboot" /> \
++<signal name="ConfirmedShutdown" /> \
++<signal name="Canceled" /> \
++<signal name="Closed" /> \
++</interface> \
++</node>';
+ 
+ const logoutDialogContent = {
+     subjectWithUser: C_("title", "Log Out %s"),
+@@ -131,13 +133,15 @@
+ 
+ const MAX_USERS_IN_SESSION_DIALOG = 5;
+ 
+-const LogindSessionIface = <interface name='org.freedesktop.login1.Session'>
+-    <property name="Id" type="s" access="read"/>
+-    <property name="Remote" type="b" access="read"/>
+-    <property name="Class" type="s" access="read"/>
+-    <property name="Type" type="s" access="read"/>
+-    <property name="State" type="s" access="read"/>
+-</interface>;
++const LogindSessionIface = '<node> \
++<interface name="org.freedesktop.login1.Session"> \
++    <property name="Id" type="s" access="read"/> \
++    <property name="Remote" type="b" access="read"/> \
++    <property name="Class" type="s" access="read"/> \
++    <property name="Type" type="s" access="read"/> \
++    <property name="State" type="s" access="read"/> \
++</interface> \
++</node>';
+ 
+ const LogindSession = Gio.DBusProxy.makeProxyWrapper(LogindSessionIface);
+ 
+--- a/js/ui/keyboard.js
++++ b/js/ui/keyboard.js
+@@ -23,27 +23,29 @@
+ const A11Y_APPLICATIONS_SCHEMA = 'org.gnome.desktop.a11y.applications';
+ const SHOW_KEYBOARD = 'screen-keyboard-enabled';
+ 
+-const CaribouKeyboardIface = <interface name='org.gnome.Caribou.Keyboard'>
+-<method name='Show'>
+-    <arg type='u' direction='in' />
+-</method>
+-<method name='Hide'>
+-    <arg type='u' direction='in' />
+-</method>
+-<method name='SetCursorLocation'>
+-    <arg type='i' direction='in' />
+-    <arg type='i' direction='in' />
+-    <arg type='i' direction='in' />
+-    <arg type='i' direction='in' />
+-</method>
+-<method name='SetEntryLocation'>
+-    <arg type='i' direction='in' />
+-    <arg type='i' direction='in' />
+-    <arg type='i' direction='in' />
+-    <arg type='i' direction='in' />
+-</method>
+-<property name='Name' access='read' type='s' />
+-</interface>;
++const CaribouKeyboardIface = '<node> \
++<interface name="org.gnome.Caribou.Keyboard"> \
++<method name="Show"> \
++    <arg type="u" direction="in" /> \
++</method> \
++<method name="Hide"> \
++    <arg type="u" direction="in" /> \
++</method> \
++<method name="SetCursorLocation"> \
++    <arg type="i" direction="in" /> \
++    <arg type="i" direction="in" /> \
++    <arg type="i" direction="in" /> \
++    <arg type="i" direction="in" /> \
++</method> \
++<method name="SetEntryLocation"> \
++    <arg type="i" direction="in" /> \
++    <arg type="i" direction="in" /> \
++    <arg type="i" direction="in" /> \
++    <arg type="i" direction="in" /> \
++</method> \
++<property name="Name" access="read" type="s" /> \
++</interface> \
++</node>';
+ 
+ const Key = new Lang.Class({
+     Name: 'Key',
+--- a/js/ui/magnifierDBus.js
++++ b/js/ui/magnifierDBus.js
+@@ -9,85 +9,89 @@
+ 
+ // Subset of gnome-mag's Magnifier dbus interface -- to be expanded.  See:
+ // http://git.gnome.org/browse/gnome-mag/tree/xml/...Magnifier.xml
+-const MagnifierIface = <interface name="org.gnome.Magnifier">
+-<method name="setActive">
+-    <arg type="b" direction="in" />
+-</method>
+-<method name="isActive">
+-    <arg type="b" direction="out" />
+-</method>
+-<method name="showCursor" />
+-<method name="hideCursor" />
+-<method name="createZoomRegion">
+-    <arg type="d" direction="in" />
+-    <arg type="d" direction="in" />
+-    <arg type="ai" direction="in" />
+-    <arg type="ai" direction="in" />
+-    <arg type="o" direction="out" />
+-</method>
+-<method name="addZoomRegion">
+-    <arg type="o" direction="in" />
+-    <arg type="b" direction="out" />
+-</method>
+-<method name="getZoomRegions">
+-    <arg type="ao" direction="out" />
+-</method>
+-<method name="clearAllZoomRegions" />
+-<method name="fullScreenCapable">
+-    <arg type="b" direction="out" />
+-</method>
+-<method name="setCrosswireSize">
+-    <arg type="i" direction="in" />
+-</method>
+-<method name="getCrosswireSize">
+-    <arg type="i" direction="out" />
+-</method>
+-<method name="setCrosswireLength">
+-    <arg type="i" direction="in" />
+-</method>
+-<method name="getCrosswireLength">
+-    <arg type="i" direction="out" />
+-</method>
+-<method name="setCrosswireClip">
+-    <arg type="b" direction="in" />
+-</method>
+-<method name="getCrosswireClip">
+-    <arg type="b" direction="out" />
+-</method>
+-<method name="setCrosswireColor">
+-    <arg type="u" direction="in" />
+-</method>
+-<method name="getCrosswireColor">
+-    <arg type="u" direction="out" />
+-</method>
+-</interface>;
++const MagnifierIface = '<node> \
++<interface name="org.gnome.Magnifier"> \
++<method name="setActive"> \
++    <arg type="b" direction="in" /> \
++</method> \
++<method name="isActive"> \
++    <arg type="b" direction="out" /> \
++</method> \
++<method name="showCursor" /> \
++<method name="hideCursor" /> \
++<method name="createZoomRegion"> \
++    <arg type="d" direction="in" /> \
++    <arg type="d" direction="in" /> \
++    <arg type="ai" direction="in" /> \
++    <arg type="ai" direction="in" /> \
++    <arg type="o" direction="out" /> \
++</method> \
++<method name="addZoomRegion"> \
++    <arg type="o" direction="in" /> \
++    <arg type="b" direction="out" /> \
++</method> \
++<method name="getZoomRegions"> \
++    <arg type="ao" direction="out" /> \
++</method> \
++<method name="clearAllZoomRegions" /> \
++<method name="fullScreenCapable"> \
++    <arg type="b" direction="out" /> \
++</method> \
++<method name="setCrosswireSize"> \
++    <arg type="i" direction="in" /> \
++</method> \
++<method name="getCrosswireSize"> \
++    <arg type="i" direction="out" /> \
++</method> \
++<method name="setCrosswireLength"> \
++    <arg type="i" direction="in" /> \
++</method> \
++<method name="getCrosswireLength"> \
++    <arg type="i" direction="out" /> \
++</method> \
++<method name="setCrosswireClip"> \
++    <arg type="b" direction="in" /> \
++</method> \
++<method name="getCrosswireClip"> \
++    <arg type="b" direction="out" /> \
++</method> \
++<method name="setCrosswireColor"> \
++    <arg type="u" direction="in" /> \
++</method> \
++<method name="getCrosswireColor"> \
++    <arg type="u" direction="out" /> \
++</method> \
++</interface> \
++</node>';
+ 
+ // Subset of gnome-mag's ZoomRegion dbus interface -- to be expanded.  See:
+ // http://git.gnome.org/browse/gnome-mag/tree/xml/...ZoomRegion.xml
+-const ZoomRegionIface = <interface name="org.gnome.Magnifier.ZoomRegion">
+-<method name="setMagFactor">
+-    <arg type="d" direction="in" />
+-    <arg type="d" direction="in" />
+-</method>
+-<method name="getMagFactor">
+-    <arg type="d" direction="out" />
+-    <arg type="d" direction="out" />
+-</method>
+-<method name="setRoi">
+-    <arg type="ai" direction="in" />
+-</method>
+-<method name="getRoi">
+-    <arg type="ai" direction="out" />
+-</method>
+-<method name="shiftContentsTo">
+-    <arg type="i" direction="in" />
+-    <arg type="i" direction="in" />
+-    <arg type="b" direction="out" />
+-</method>
+-<method name="moveResize">
+-    <arg type="ai" direction="in" />
+-</method>
+-</interface>;
++const ZoomRegionIface = '<node> \
++<interface name="org.gnome.Magnifier.ZoomRegion"> \
++<method name="setMagFactor"> \
++    <arg type="d" direction="in" /> \
++    <arg type="d" direction="in" /> \
++</method> \
++<method name="getMagFactor"> \
++    <arg type="d" direction="out" /> \
++    <arg type="d" direction="out" /> \
++</method> \
++<method name="setRoi"> \
++    <arg type="ai" direction="in" /> \
++</method> \
++<method name="getRoi"> \
++    <arg type="ai" direction="out" /> \
++</method> \
++<method name="shiftContentsTo"> \
++    <arg type="i" direction="in" /> \
++    <arg type="i" direction="in" /> \
++    <arg type="b" direction="out" /> \
++</method> \
++<method name="moveResize"> \
++    <arg type="ai" direction="in" /> \
++</method> \
++</interface> \
++</node>';
+ 
+ // For making unique ZoomRegion DBus proxy object paths of the form:
+ // '/org/gnome/Magnifier/ZoomRegion/zoomer0',
+--- a/js/ui/notificationDaemon.js
++++ b/js/ui/notificationDaemon.js
+@@ -18,51 +18,55 @@
+ let nextNotificationId = 1;
+ 
+ // Should really be defined in Gio.js
+-const BusIface = <interface name="org.freedesktop.DBus">
+-<method name="GetConnectionUnixProcessID">
+-    <arg type="s" direction="in" />
+-    <arg type="u" direction="out" />
+-</method>
+-</interface>;
++const BusIface = '<node> \
++<interface name="org.freedesktop.DBus"> \
++<method name="GetConnectionUnixProcessID"> \
++    <arg type="s" direction="in" /> \
++    <arg type="u" direction="out" /> \
++</method> \
++</interface> \
++</node>';
+ 
+ var BusProxy = Gio.DBusProxy.makeProxyWrapper(BusIface);
+ function Bus() {
+     return new BusProxy(Gio.DBus.session, 'org.freedesktop.DBus', '/org/freedesktop/DBus');
+ }
+ 
+-const NotificationDaemonIface = <interface name="org.freedesktop.Notifications">
+-<method name="Notify">
+-    <arg type="s" direction="in"/>
+-    <arg type="u" direction="in"/>
+-    <arg type="s" direction="in"/>
+-    <arg type="s" direction="in"/>
+-    <arg type="s" direction="in"/>
+-    <arg type="as" direction="in"/>
+-    <arg type="a{sv}" direction="in"/>
+-    <arg type="i" direction="in"/>
+-    <arg type="u" direction="out"/>
+-</method>
+-<method name="CloseNotification">
+-    <arg type="u" direction="in"/>
+-</method>
+-<method name="GetCapabilities">
+-    <arg type="as" direction="out"/>
+-</method>
+-<method name="GetServerInformation">
+-    <arg type="s" direction="out"/>
+-    <arg type="s" direction="out"/>
+-    <arg type="s" direction="out"/>
+-    <arg type="s" direction="out"/>
+-</method>
+-<signal name="NotificationClosed">
+-    <arg type="u"/>
+-    <arg type="u"/>
+-</signal>
+-<signal name="ActionInvoked">
+-    <arg type="u"/>
+-    <arg type="s"/>
+-</signal>
+-</interface>;
++const NotificationDaemonIface = '<node> \
++<interface name="org.freedesktop.Notifications"> \
++<method name="Notify"> \
++    <arg type="s" direction="in"/> \
++    <arg type="u" direction="in"/> \
++    <arg type="s" direction="in"/> \
++    <arg type="s" direction="in"/> \
++    <arg type="s" direction="in"/> \
++    <arg type="as" direction="in"/> \
++    <arg type="a{sv}" direction="in"/> \
++    <arg type="i" direction="in"/> \
++    <arg type="u" direction="out"/> \
++</method> \
++<method name="CloseNotification"> \
++    <arg type="u" direction="in"/> \
++</method> \
++<method name="GetCapabilities"> \
++    <arg type="as" direction="out"/> \
++</method> \
++<method name="GetServerInformation"> \
++    <arg type="s" direction="out"/> \
++    <arg type="s" direction="out"/> \
++    <arg type="s" direction="out"/> \
++    <arg type="s" direction="out"/> \
++</method> \
++<signal name="NotificationClosed"> \
++    <arg type="u"/> \
++    <arg type="u"/> \
++</signal> \
++<signal name="ActionInvoked"> \
++    <arg type="u"/> \
++    <arg type="s"/> \
++</signal> \
++</interface> \
++</node>';
+ 
+ const NotificationClosedReason = {
+     EXPIRED: 1,
+--- a/js/ui/remoteSearch.js
++++ b/js/ui/remoteSearch.js
+@@ -11,49 +11,53 @@
+ 
+ const KEY_FILE_GROUP = 'Shell Search Provider';
+ 
+-const SearchProviderIface = <interface name="org.gnome.Shell.SearchProvider">
+-<method name="GetInitialResultSet">
+-    <arg type="as" direction="in" />
+-    <arg type="as" direction="out" />
+-</method>
+-<method name="GetSubsearchResultSet">
+-    <arg type="as" direction="in" />
+-    <arg type="as" direction="in" />
+-    <arg type="as" direction="out" />
+-</method>
+-<method name="GetResultMetas">
+-    <arg type="as" direction="in" />
+-    <arg type="aa{sv}" direction="out" />
+-</method>
+-<method name="ActivateResult">
+-    <arg type="s" direction="in" />
+-</method>
+-</interface>;
++const SearchProviderIface = '<node> \
++<interface name="org.gnome.Shell.SearchProvider"> \
++<method name="GetInitialResultSet"> \
++    <arg type="as" direction="in" /> \
++    <arg type="as" direction="out" /> \
++</method> \
++<method name="GetSubsearchResultSet"> \
++    <arg type="as" direction="in" /> \
++    <arg type="as" direction="in" /> \
++    <arg type="as" direction="out" /> \
++</method> \
++<method name="GetResultMetas"> \
++    <arg type="as" direction="in" /> \
++    <arg type="aa{sv}" direction="out" /> \
++</method> \
++<method name="ActivateResult"> \
++    <arg type="s" direction="in" /> \
++</method> \
++</interface> \
++</node>';
+ 
+-const SearchProvider2Iface = <interface name="org.gnome.Shell.SearchProvider2">
+-<method name="GetInitialResultSet">
+-    <arg type="as" direction="in" />
+-    <arg type="as" direction="out" />
+-</method>
+-<method name="GetSubsearchResultSet">
+-    <arg type="as" direction="in" />
+-    <arg type="as" direction="in" />
+-    <arg type="as" direction="out" />
+-</method>
+-<method name="GetResultMetas">
+-    <arg type="as" direction="in" />
+-    <arg type="aa{sv}" direction="out" />
+-</method>
+-<method name="ActivateResult">
+-    <arg type="s" direction="in" />
+-    <arg type="as" direction="in" />
+-    <arg type="u" direction="in" />
+-</method>
+-<method name="LaunchSearch">
+-    <arg type="as" direction="in" />
+-    <arg type="u" direction="in" />
+-</method>
+-</interface>;
++const SearchProvider2Iface = '<node> \
++<interface name="org.gnome.Shell.SearchProvider2"> \
++<method name="GetInitialResultSet"> \
++    <arg type="as" direction="in" /> \
++    <arg type="as" direction="out" /> \
++</method> \
++<method name="GetSubsearchResultSet"> \
++    <arg type="as" direction="in" /> \
++    <arg type="as" direction="in" /> \
++    <arg type="as" direction="out" /> \
++</method> \
++<method name="GetResultMetas"> \
++    <arg type="as" direction="in" /> \
++    <arg type="aa{sv}" direction="out" /> \
++</method> \
++<method name="ActivateResult"> \
++    <arg type="s" direction="in" /> \
++    <arg type="as" direction="in" /> \
++    <arg type="u" direction="in" /> \
++</method> \
++<method name="LaunchSearch"> \
++    <arg type="as" direction="in" /> \
++    <arg type="u" direction="in" /> \
++</method> \
++</interface> \
++</node>';
+ 
+ var SearchProviderProxy = Gio.DBusProxy.makeProxyWrapper(SearchProviderIface);
+ var SearchProvider2Proxy = Gio.DBusProxy.makeProxyWrapper(SearchProvider2Iface);
+--- a/js/ui/screencast.js
++++ b/js/ui/screencast.js
+@@ -9,27 +9,29 @@
+ const Hash = imports.misc.hash;
+ const Main = imports.ui.main;
+ 
+-const ScreencastIface = <interface name="org.gnome.Shell.Screencast">
+-<method name="Screencast">
+-    <arg type="s" direction="in" name="file_template"/>
+-    <arg type="a{sv}" direction="in" name="options"/>
+-    <arg type="b" direction="out" name="success"/>
+-    <arg type="s" direction="out" name="filename_used"/>
+-</method>
+-<method name="ScreencastArea">
+-    <arg type="i" direction="in" name="x"/>
+-    <arg type="i" direction="in" name="y"/>
+-    <arg type="i" direction="in" name="width"/>
+-    <arg type="i" direction="in" name="height"/>
+-    <arg type="s" direction="in" name="file_template"/>
+-    <arg type="a{sv}" direction="in" name="options"/>
+-    <arg type="b" direction="out" name="success"/>
+-    <arg type="s" direction="out" name="filename_used"/>
+-</method>
+-<method name="StopScreencast">
+-    <arg type="b" direction="out" name="success"/>
+-</method>
+-</interface>;
++const ScreencastIface = '<node> \
++<interface name="org.gnome.Shell.Screencast"> \
++<method name="Screencast"> \
++    <arg type="s" direction="in" name="file_template"/> \
++    <arg type="a{sv}" direction="in" name="options"/> \
++    <arg type="b" direction="out" name="success"/> \
++    <arg type="s" direction="out" name="filename_used"/> \
++</method> \
++<method name="ScreencastArea"> \
++    <arg type="i" direction="in" name="x"/> \
++    <arg type="i" direction="in" name="y"/> \
++    <arg type="i" direction="in" name="width"/> \
++    <arg type="i" direction="in" name="height"/> \
++    <arg type="s" direction="in" name="file_template"/> \
++    <arg type="a{sv}" direction="in" name="options"/> \
++    <arg type="b" direction="out" name="success"/> \
++    <arg type="s" direction="out" name="filename_used"/> \
++</method> \
++<method name="StopScreencast"> \
++    <arg type="b" direction="out" name="success"/> \
++</method> \
++</interface> \
++</node>';
+ 
+ const ScreencastService = new Lang.Class({
+     Name: 'ScreencastService',
+--- a/js/ui/screenshot.js
++++ b/js/ui/screenshot.js
+@@ -15,45 +15,47 @@
+ const Main = imports.ui.main;
+ const Tweener = imports.ui.tweener;
+ 
+-const ScreenshotIface = <interface name="org.gnome.Shell.Screenshot">
+-<method name="ScreenshotArea">
+-    <arg type="i" direction="in" name="x"/>
+-    <arg type="i" direction="in" name="y"/>
+-    <arg type="i" direction="in" name="width"/>
+-    <arg type="i" direction="in" name="height"/>
+-    <arg type="b" direction="in" name="flash"/>
+-    <arg type="s" direction="in" name="filename"/>
+-    <arg type="b" direction="out" name="success"/>
+-    <arg type="s" direction="out" name="filename_used"/>
+-</method>
+-<method name="ScreenshotWindow">
+-    <arg type="b" direction="in" name="include_frame"/>
+-    <arg type="b" direction="in" name="include_cursor"/>
+-    <arg type="b" direction="in" name="flash"/>
+-    <arg type="s" direction="in" name="filename"/>
+-    <arg type="b" direction="out" name="success"/>
+-    <arg type="s" direction="out" name="filename_used"/>
+-</method>
+-<method name="Screenshot">
+-    <arg type="b" direction="in" name="include_cursor"/>
+-    <arg type="b" direction="in" name="flash"/>
+-    <arg type="s" direction="in" name="filename"/>
+-    <arg type="b" direction="out" name="success"/>
+-    <arg type="s" direction="out" name="filename_used"/>
+-</method>
+-<method name="SelectArea">
+-    <arg type="i" direction="out" name="x"/>
+-    <arg type="i" direction="out" name="y"/>
+-    <arg type="i" direction="out" name="width"/>
+-    <arg type="i" direction="out" name="height"/>
+-</method>
+-<method name="FlashArea">
+-    <arg type="i" direction="in" name="x"/>
+-    <arg type="i" direction="in" name="y"/>
+-    <arg type="i" direction="in" name="width"/>
+-    <arg type="i" direction="in" name="height"/>
+-</method>
+-</interface>;
++const ScreenshotIface = '<node> \
++<interface name="org.gnome.Shell.Screenshot"> \
++<method name="ScreenshotArea"> \
++    <arg type="i" direction="in" name="x"/> \
++    <arg type="i" direction="in" name="y"/> \
++    <arg type="i" direction="in" name="width"/> \
++    <arg type="i" direction="in" name="height"/> \
++    <arg type="b" direction="in" name="flash"/> \
++    <arg type="s" direction="in" name="filename"/> \
++    <arg type="b" direction="out" name="success"/> \
++    <arg type="s" direction="out" name="filename_used"/> \
++</method> \
++<method name="ScreenshotWindow"> \
++    <arg type="b" direction="in" name="include_frame"/> \
++    <arg type="b" direction="in" name="include_cursor"/> \
++    <arg type="b" direction="in" name="flash"/> \
++    <arg type="s" direction="in" name="filename"/> \
++    <arg type="b" direction="out" name="success"/> \
++    <arg type="s" direction="out" name="filename_used"/> \
++</method> \
++<method name="Screenshot"> \
++    <arg type="b" direction="in" name="include_cursor"/> \
++    <arg type="b" direction="in" name="flash"/> \
++    <arg type="s" direction="in" name="filename"/> \
++    <arg type="b" direction="out" name="success"/> \
++    <arg type="s" direction="out" name="filename_used"/> \
++</method> \
++<method name="SelectArea"> \
++    <arg type="i" direction="out" name="x"/> \
++    <arg type="i" direction="out" name="y"/> \
++    <arg type="i" direction="out" name="width"/> \
++    <arg type="i" direction="out" name="height"/> \
++</method> \
++<method name="FlashArea"> \
++    <arg type="i" direction="in" name="x"/> \
++    <arg type="i" direction="in" name="y"/> \
++    <arg type="i" direction="in" name="width"/> \
++    <arg type="i" direction="in" name="height"/> \
++</method> \
++</interface> \
++</node>';
+ 
+ const ScreenshotService = new Lang.Class({
+     Name: 'ScreenshotService',
+--- a/js/ui/scripting.js
++++ b/js/ui/scripting.js
+@@ -69,16 +69,18 @@
+     };
+ }
+ 
+-const PerfHelperIface = <interface name="org.gnome.Shell.PerfHelper">
+-<method name="CreateWindow">
+-    <arg type="i" direction="in" />
+-    <arg type="i" direction="in" />
+-    <arg type="b" direction="in" />
+-    <arg type="b" direction="in" />
+-</method>
+-<method name="WaitWindows" />
+-<method name="DestroyWindows" />
+-</interface>;
++const PerfHelperIface = '<node> \
++<interface name="org.gnome.Shell.PerfHelper"> \
++<method name="CreateWindow"> \
++    <arg type="i" direction="in" /> \
++    <arg type="i" direction="in" /> \
++    <arg type="b" direction="in" /> \
++    <arg type="b" direction="in" /> \
++</method> \
++<method name="WaitWindows" /> \
++<method name="DestroyWindows" /> \
++</interface> \
++</node>';
+ 
+ var PerfHelperProxy = Gio.DBusProxy.makeProxyWrapper(PerfHelperIface);
+ function PerfHelper() {
+--- a/js/ui/shellDBus.js
++++ b/js/ui/shellDBus.js
+@@ -15,59 +15,63 @@
+ const Screenshot = imports.ui.screenshot;
+ const ViewSelector = imports.ui.viewSelector;
+ 
+-const GnomeShellIface = <interface name="org.gnome.Shell">
+-<method name="Eval">
+-    <arg type="s" direction="in" name="script" />
+-    <arg type="b" direction="out" name="success" />
+-    <arg type="s" direction="out" name="result" />
+-</method>
+-<method name="FocusSearch"/>
+-<method name="ShowOSD">
+-    <arg type="a{sv}" direction="in" name="params"/>
+-</method>
+-<method name="FocusApp">
+-    <arg type="s" direction="in" name="id"/>
+-</method>
+-<method name="ShowApplications" />
+-<method name="GrabAccelerator">
+-    <arg type="s" direction="in" name="accelerator"/>
+-    <arg type="u" direction="in" name="flags"/>
+-    <arg type="u" direction="out" name="action"/>
+-</method>
+-<method name="GrabAccelerators">
+-    <arg type="a(su)" direction="in" name="accelerators"/>
+-    <arg type="au" direction="out" name="actions"/>
+-</method>
+-<method name="UngrabAccelerator">
+-    <arg type="u" direction="in" name="action"/>
+-    <arg type="b" direction="out" name="success"/>
+-</method>
+-<signal name="AcceleratorActivated">
+-    <arg name="action" type="u" />
+-    <arg name="deviceid" type="u" />
+-    <arg name="timestamp" type="u" />
+-</signal>
+-<property name="Mode" type="s" access="read" />
+-<property name="OverviewActive" type="b" access="readwrite" />
+-<property name="ShellVersion" type="s" access="read" />
+-</interface>;
+-
+-const ScreenSaverIface = <interface name="org.gnome.ScreenSaver">
+-<method name="Lock">
+-</method>
+-<method name="GetActive">
+-    <arg name="active" direction="out" type="b" />
+-</method>
+-<method name="SetActive">
+-    <arg name="value" direction="in" type="b" />
+-</method>
+-<method name="GetActiveTime">
+-    <arg name="value" direction="out" type="u" />
+-</method>
+-<signal name="ActiveChanged">
+-    <arg name="new_value" type="b" />
+-</signal>
+-</interface>;
++const GnomeShellIface = '<node> \
++<interface name="org.gnome.Shell"> \
++<method name="Eval"> \
++    <arg type="s" direction="in" name="script" /> \
++    <arg type="b" direction="out" name="success" /> \
++    <arg type="s" direction="out" name="result" /> \
++</method> \
++<method name="FocusSearch"/> \
++<method name="ShowOSD"> \
++    <arg type="a{sv}" direction="in" name="params"/> \
++</method> \
++<method name="FocusApp"> \
++    <arg type="s" direction="in" name="id"/> \
++</method> \
++<method name="ShowApplications" /> \
++<method name="GrabAccelerator"> \
++    <arg type="s" direction="in" name="accelerator"/> \
++    <arg type="u" direction="in" name="flags"/> \
++    <arg type="u" direction="out" name="action"/> \
++</method> \
++<method name="GrabAccelerators"> \
++    <arg type="a(su)" direction="in" name="accelerators"/> \
++    <arg type="au" direction="out" name="actions"/> \
++</method> \
++<method name="UngrabAccelerator"> \
++    <arg type="u" direction="in" name="action"/> \
++    <arg type="b" direction="out" name="success"/> \
++</method> \
++<signal name="AcceleratorActivated"> \
++    <arg name="action" type="u" /> \
++    <arg name="deviceid" type="u" /> \
++    <arg name="timestamp" type="u" /> \
++</signal> \
++<property name="Mode" type="s" access="read" /> \
++<property name="OverviewActive" type="b" access="readwrite" /> \
++<property name="ShellVersion" type="s" access="read" /> \
++</interface> \
++</node>';
++
++const ScreenSaverIface = '<node> \
++<interface name="org.gnome.ScreenSaver"> \
++<method name="Lock"> \
++</method> \
++<method name="GetActive"> \
++    <arg name="active" direction="out" type="b" /> \
++</method> \
++<method name="SetActive"> \
++    <arg name="value" direction="in" type="b" /> \
++</method> \
++<method name="GetActiveTime"> \
++    <arg name="value" direction="out" type="u" /> \
++</method> \
++<signal name="ActiveChanged"> \
++    <arg name="new_value" type="b" /> \
++</signal> \
++</interface> \
++</node>';
+ 
+ const GnomeShell = new Lang.Class({
+     Name: 'GnomeShellDBus',
+@@ -246,41 +250,43 @@
+     ShellVersion: Config.PACKAGE_VERSION
+ });
+ 
+-const GnomeShellExtensionsIface = <interface name="org.gnome.Shell.Extensions">
+-<method name="ListExtensions">
+-    <arg type="a{sa{sv}}" direction="out" name="extensions" />
+-</method>
+-<method name="GetExtensionInfo">
+-    <arg type="s" direction="in" name="extension" />
+-    <arg type="a{sv}" direction="out" name="info" />
+-</method>
+-<method name="GetExtensionErrors">
+-    <arg type="s" direction="in" name="extension" />
+-    <arg type="as" direction="out" name="errors" />
+-</method>
+-<signal name="ExtensionStatusChanged">
+-    <arg type="s" name="uuid"/>
+-    <arg type="i" name="state"/>
+-    <arg type="s" name="error"/>
+-</signal>
+-<method name="InstallRemoteExtension">
+-    <arg type="s" direction="in" name="uuid"/>
+-    <arg type="s" direction="out" name="result"/>
+-</method>
+-<method name="UninstallExtension">
+-    <arg type="s" direction="in" name="uuid"/>
+-    <arg type="b" direction="out" name="success"/>
+-</method>
+-<method name="LaunchExtensionPrefs">
+-    <arg type="s" direction="in" name="uuid"/>
+-</method>
+-<method name="ReloadExtension">
+-    <arg type="s" direction="in" name="uuid"/>
+-</method>
+-<method name="CheckForUpdates">
+-</method>
+-<property name="ShellVersion" type="s" access="read" />
+-</interface>;
++const GnomeShellExtensionsIface = '<node> \
++<interface name="org.gnome.Shell.Extensions"> \
++<method name="ListExtensions"> \
++    <arg type="a{sa{sv}}" direction="out" name="extensions" /> \
++</method> \
++<method name="GetExtensionInfo"> \
++    <arg type="s" direction="in" name="extension" /> \
++    <arg type="a{sv}" direction="out" name="info" /> \
++</method> \
++<method name="GetExtensionErrors"> \
++    <arg type="s" direction="in" name="extension" /> \
++    <arg type="as" direction="out" name="errors" /> \
++</method> \
++<signal name="ExtensionStatusChanged"> \
++    <arg type="s" name="uuid"/> \
++    <arg type="i" name="state"/> \
++    <arg type="s" name="error"/> \
++</signal> \
++<method name="InstallRemoteExtension"> \
++    <arg type="s" direction="in" name="uuid"/> \
++    <arg type="s" direction="out" name="result"/> \
++</method> \
++<method name="UninstallExtension"> \
++    <arg type="s" direction="in" name="uuid"/> \
++    <arg type="b" direction="out" name="success"/> \
++</method> \
++<method name="LaunchExtensionPrefs"> \
++    <arg type="s" direction="in" name="uuid"/> \
++</method> \
++<method name="ReloadExtension"> \
++    <arg type="s" direction="in" name="uuid"/> \
++</method> \
++<method name="CheckForUpdates"> \
++</method> \
++<property name="ShellVersion" type="s" access="read" /> \
++</interface> \
++</node>';
+ 
+ const GnomeShellExtensions = new Lang.Class({
+     Name: 'GnomeShellExtensionsDBus',
+--- a/js/ui/shellMountOperation.js
++++ b/js/ui/shellMountOperation.js
+@@ -521,36 +521,38 @@
+ });
+ Signals.addSignalMethods(ShellProcessesDialog.prototype);
+ 
+-const GnomeShellMountOpIface = <interface name="org.Gtk.MountOperationHandler">
+-<method name="AskPassword">
+-    <arg type="s" direction="in" name="object_id"/>
+-    <arg type="s" direction="in" name="message"/>
+-    <arg type="s" direction="in" name="icon_name"/>
+-    <arg type="s" direction="in" name="default_user"/>
+-    <arg type="s" direction="in" name="default_domain"/>
+-    <arg type="u" direction="in" name="flags"/>
+-    <arg type="u" direction="out" name="response"/>
+-    <arg type="a{sv}" direction="out" name="response_details"/>
+-</method>
+-<method name="AskQuestion">
+-    <arg type="s" direction="in" name="object_id"/>
+-    <arg type="s" direction="in" name="message"/>
+-    <arg type="s" direction="in" name="icon_name"/>
+-    <arg type="as" direction="in" name="choices"/>
+-    <arg type="u" direction="out" name="response"/>
+-    <arg type="a{sv}" direction="out" name="response_details"/>
+-</method>
+-<method name="ShowProcesses">
+-    <arg type="s" direction="in" name="object_id"/>
+-    <arg type="s" direction="in" name="message"/>
+-    <arg type="s" direction="in" name="icon_name"/>
+-    <arg type="ai" direction="in" name="application_pids"/>
+-    <arg type="as" direction="in" name="choices"/>
+-    <arg type="u" direction="out" name="response"/>
+-    <arg type="a{sv}" direction="out" name="response_details"/>
+-</method>
+-<method name="Close"/>
+-</interface>;
++const GnomeShellMountOpIface = '<node> \
++<interface name="org.Gtk.MountOperationHandler"> \
++<method name="AskPassword"> \
++    <arg type="s" direction="in" name="object_id"/> \
++    <arg type="s" direction="in" name="message"/> \
++    <arg type="s" direction="in" name="icon_name"/> \
++    <arg type="s" direction="in" name="default_user"/> \
++    <arg type="s" direction="in" name="default_domain"/> \
++    <arg type="u" direction="in" name="flags"/> \
++    <arg type="u" direction="out" name="response"/> \
++    <arg type="a{sv}" direction="out" name="response_details"/> \
++</method> \
++<method name="AskQuestion"> \
++    <arg type="s" direction="in" name="object_id"/> \
++    <arg type="s" direction="in" name="message"/> \
++    <arg type="s" direction="in" name="icon_name"/> \
++    <arg type="as" direction="in" name="choices"/> \
++    <arg type="u" direction="out" name="response"/> \
++    <arg type="a{sv}" direction="out" name="response_details"/> \
++</method> \
++<method name="ShowProcesses"> \
++    <arg type="s" direction="in" name="object_id"/> \
++    <arg type="s" direction="in" name="message"/> \
++    <arg type="s" direction="in" name="icon_name"/> \
++    <arg type="ai" direction="in" name="application_pids"/> \
++    <arg type="as" direction="in" name="choices"/> \
++    <arg type="u" direction="out" name="response"/> \
++    <arg type="a{sv}" direction="out" name="response_details"/> \
++</method> \
++<method name="Close"/> \
++</interface> \
++</node>';
+ 
+ const ShellMountOperationType = {
+     NONE: 0,
+--- a/js/ui/status/keyboard.js
++++ b/js/ui/status/keyboard.js
+@@ -41,11 +41,13 @@
+ const BUS_NAME = 'org.gnome.SettingsDaemon.Keyboard';
+ const OBJECT_PATH = '/org/gnome/SettingsDaemon/Keyboard';
+ 
+-const KeyboardManagerInterface = <interface name="org.gnome.SettingsDaemon.Keyboard">
+-<method name="SetInputSource">
+-    <arg type="u" direction="in" />
+-</method>
+-</interface>;
++const KeyboardManagerInterface = '<node> \
++<interface name="org.gnome.SettingsDaemon.Keyboard"> \
++<method name="SetInputSource"> \
++    <arg type="u" direction="in" /> \
++</method> \
++</interface> \
++</node>';
+ 
+ const KeyboardManagerProxy = Gio.DBusProxy.makeProxyWrapper(KeyboardManagerInterface);
+ 
+--- a/js/ui/status/power.js
++++ b/js/ui/status/power.js
+@@ -11,15 +11,17 @@
+ const BUS_NAME = 'org.gnome.SettingsDaemon.Power';
+ const OBJECT_PATH = '/org/gnome/SettingsDaemon/Power';
+ 
+-const PowerManagerInterface = <interface name="org.gnome.SettingsDaemon.Power">
+-<method name="GetDevices">
+-    <arg type="a(susdut)" direction="out" />
+-</method>
+-<method name="GetPrimaryDevice">
+-    <arg type="(susdut)" direction="out" />
+-</method>
+-<property name="Icon" type="s" access="read" />
+-</interface>;
++const PowerManagerInterface = '<node> \
++<interface name="org.gnome.SettingsDaemon.Power"> \
++<method name="GetDevices"> \
++    <arg type="a(susdut)" direction="out" /> \
++</method> \
++<method name="GetPrimaryDevice"> \
++    <arg type="(susdut)" direction="out" /> \
++</method> \
++<property name="Icon" type="s" access="read" /> \
++</interface> \
++</node>';
+ 
+ const PowerManagerProxy = Gio.DBusProxy.makeProxyWrapper(PowerManagerInterface);
+ 
+--- a/js/ui/status/rfkill.js
++++ b/js/ui/status/rfkill.js
+@@ -9,9 +9,11 @@
+ const BUS_NAME = 'org.gnome.SettingsDaemon.Rfkill';
+ const OBJECT_PATH = '/org/gnome/SettingsDaemon/Rfkill';
+ 
+-const RfkillManagerInterface = <interface name="org.gnome.SettingsDaemon.Rfkill">
+-<property name="AirplaneMode" type="b" access="readwrite" />
+-</interface>;
++const RfkillManagerInterface = '<node> \
++<interface name="org.gnome.SettingsDaemon.Rfkill"> \
++<property name="AirplaneMode" type="b" access="readwrite" /> \
++</interface> \
++</node>';
+ 
+ const RfkillManagerProxy = Gio.DBusProxy.makeProxyWrapper(RfkillManagerInterface);
+ 

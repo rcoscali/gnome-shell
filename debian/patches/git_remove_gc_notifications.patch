@@ -1,0 +1,42 @@
+From 0d92451c498ff36313f430a5a058f84e9d714195 Mon Sep 17 00:00:00 2001
+From: Jasper St. Pierre <jstpierre@mecheye.net>
+Date: Wed, 15 Jan 2014 14:18:53 +0000
+Subject: shell-global: Remove unused gc-notifications support
+
+This is going to be removed upstream.
+---
+--- a/src/shell-global.c
++++ b/src/shell-global.c
+@@ -93,8 +93,6 @@
+ 
+   guint32 xdnd_timestamp;
+ 
+-  gint64 last_gc_end_time;
+-
+   gboolean has_modal;
+ };
+ 
+@@ -287,9 +285,7 @@
+   search_path = g_strsplit (shell_js, ":", -1);
+   global->js_context = g_object_new (GJS_TYPE_CONTEXT,
+                                      "search-path", search_path,
+-                                     "gc-notifications", TRUE,
+                                      NULL);
+-  g_signal_connect (global->js_context, "gc", G_CALLBACK (shell_global_on_gc), global);
+ 
+   g_strfreev (search_path);
+ }
+@@ -1131,13 +1127,6 @@
+   g_ptr_array_free (arr, TRUE);
+ }
+ 
+-static void
+-shell_global_on_gc (GjsContext   *context,
+-                    ShellGlobal  *global)
+-{
+-  global->last_gc_end_time = g_get_monotonic_time ();
+-}
+-
+ /**
+  * shell_global_get_memory_info:
+  * @global:

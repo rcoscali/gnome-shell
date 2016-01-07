@@ -1,0 +1,97 @@
+From 7296bedd8e958d2cfeddd8af8382a74eb88dac9c Mon Sep 17 00:00:00 2001
+From: Tim Lunn <tim@feathertop.org>
+Date: Tue, 29 Oct 2013 07:12:10 +0000
+Subject: remove direct access to jsapi
+
+with js24 its not possible to access jsapi directly from C code
+
+https://bugzilla.gnome.org/show_bug.cgi?id=711052
+---
+diff --git a/src/main.c b/src/main.c
+index a563c08..c3ff611 100644
+--- a/src/main.c
++++ b/src/main.c
+@@ -29,8 +29,6 @@
+ #include "shell-perf-log.h"
+ #include "st.h"
+ 
+-#include <jsapi.h>
+-
+ extern GType gnome_shell_plugin_get_type (void);
+ 
+ #define SHELL_DBUS_SERVICE "org.gnome.Shell"
+diff --git a/src/shell-global.c b/src/shell-global.c
+index 04e2724..e453df2 100644
+--- a/src/shell-global.c
++++ b/src/shell-global.c
+@@ -22,7 +22,6 @@
+ #include <clutter/x11/clutter-x11.h>
+ #include <gdk/gdkx.h>
+ #include <gio/gio.h>
+-#include <gjs/gjs-module.h>
+ #include <girepository.h>
+ #include <meta/display.h>
+ #include <meta/util.h>
+@@ -1143,44 +1142,6 @@ shell_global_on_gc (GjsContext   *context,
+ }
+ 
+ /**
+- * shell_global_get_memory_info:
+- * @global:
+- * @meminfo: (out caller-allocates): Output location for memory information
+- *
+- * Load process-global data about memory usage.
+- */
+-void
+-shell_global_get_memory_info (ShellGlobal        *global,
+-                              ShellMemoryInfo    *meminfo)
+-{
+-  JSContext *context;
+-  gint64 now;
+-
+-#ifdef HAVE_MALLINFO
+-  {
+-    struct mallinfo info = mallinfo ();
+-    meminfo->glibc_uordblks = info.uordblks;
+-  }
+-#else
+-  meminfo->glibc_uordblks = 0;
+-#endif
+-
+-  context = gjs_context_get_native_context (global->js_context);
+-
+-  meminfo->js_bytes = JS_GetGCParameter (JS_GetRuntime (context), JSGC_BYTES);
+-
+-  meminfo->gjs_boxed = (unsigned int) gjs_counter_boxed.value;
+-  meminfo->gjs_gobject = (unsigned int) gjs_counter_object.value;
+-  meminfo->gjs_function = (unsigned int) gjs_counter_function.value;
+-  meminfo->gjs_closure = (unsigned int) gjs_counter_closure.value;
+-
+-  now = g_get_monotonic_time ();
+-
+-  meminfo->last_gc_seconds_ago = (now - global->last_gc_end_time) / G_TIME_SPAN_SECOND;
+-}
+-
+-
+-/**
+  * shell_global_notify_error:
+  * @global: a #ShellGlobal
+  * @msg: Error message
+diff --git a/src/shell-global.h b/src/shell-global.h
+index b445c42..ec4a089 100644
+--- a/src/shell-global.h
++++ b/src/shell-global.h
+@@ -69,10 +69,6 @@ typedef struct {
+   guint  last_gc_seconds_ago;
+ } ShellMemoryInfo;
+ 
+-void     shell_global_get_memory_info      (ShellGlobal     *global,
+-                                            ShellMemoryInfo *meminfo);
+-
+-
+ /* Run-at-leisure API */
+ void shell_global_begin_work     (ShellGlobal          *global);
+ void shell_global_end_work       (ShellGlobal          *global);
+--
+cgit v0.9.2
+
