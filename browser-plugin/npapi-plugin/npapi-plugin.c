@@ -39,9 +39,11 @@
 #define PLUGIN_DESCRIPTION "This plugin provides integration with Gnome Shell " \
       "for live extension enabling and disabling. " \
       "It can be used only by extensions.gnome.org"
-#define PLUGIN_MIME_STRING "application/x-gnome-shell-integration::Gnome Shell Integration Dummy Content-Type";
+#define PLUGIN_MIME_STRING "application/x-gnome-shell-integration::Gnome Shell Integration Dummy Content-Type"
 
 #define PLUGIN_API_VERSION 5
+
+#define G_DEBUG(msg...) g_message (msg)
 
 typedef struct {
   GDBusProxy *proxy;
@@ -58,6 +60,8 @@ get_string_property (NPP         instance,
   NPString result_str;
   gchar *result_copy;
 
+  G_DEBUG("get_string_property: name = '%s'", name);
+
   result_copy = NULL;
 
   if (!funcs.getproperty (instance, obj,
@@ -73,6 +77,7 @@ get_string_property (NPP         instance,
 
  out:
   funcs.releasevariantvalue (&result);
+  G_DEBUG("get_string_property: result = '%s'", result_copy);
   return result_copy;
 }
 
@@ -110,10 +115,12 @@ check_origin_and_protocol (NPP instance)
   hostname = get_string_property (instance,
                                   NPVARIANT_TO_OBJECT (location),
                                   "hostname");
+  G_DEBUG("check_origin_and_protocol: hostname = '%s'", hostname);
+  G_DEBUG("check_origin_and_protocol: ORIGIN = '%s'", ORIGIN);
 
   if (g_strcmp0 (hostname, ORIGIN))
     {
-      g_debug ("origin does not match, is %s",
+      G_DEBUG ("origin does not match, is %s",
                hostname);
 
       goto out;
@@ -125,7 +132,7 @@ check_origin_and_protocol (NPP instance)
 
   if (g_strcmp0 (protocol, "https:") != 0)
     {
-      g_debug ("protocol does not match, is %s",
+      G_DEBUG ("protocol does not match, is %s",
                protocol);
 
       goto out;
@@ -153,7 +160,7 @@ NP_Initialize(NPNetscapeFuncs *pfuncs, NPPluginFuncs *plugin)
   /* global initialization routine, called once when plugin
      is loaded */
 
-  g_debug ("plugin loaded");
+  G_DEBUG ("NP_Initialize: plugin loaded");
 
   memcpy (&funcs, pfuncs, sizeof (funcs));
 
@@ -169,12 +176,14 @@ NP_Initialize(NPNetscapeFuncs *pfuncs, NPPluginFuncs *plugin)
 NPError
 NP_Shutdown(void)
 {
+  G_DEBUG ("NP_Shutdown: plugin unloaded");
   return NPERR_NO_ERROR;
 }
 
 const char*
 NP_GetMIMEDescription(void)
 {
+  G_DEBUG ("NP_GetMIMEDescription: plugin mime string = '%s'", PLUGIN_MIME_STRING);
   return PLUGIN_MIME_STRING;
 }
 
@@ -183,14 +192,19 @@ NP_GetValue(void         *instance,
             NPPVariable   variable,
             void         *value)
 {
+  G_DEBUG ("NP_GetValue: variable = %d", variable);
+
   switch (variable) {
   case NPPVpluginNameString:
+    G_DEBUG ("NP_GetValue: variable PLUGIN_NAME = '%s'", PLUGIN_NAME);
     *(char**)value = PLUGIN_NAME;
     break;
   case NPPVpluginDescriptionString:
+    G_DEBUG ("NP_GetValue: variable PLUGIN_DESCRIPTION = '%s'", PLUGIN_DESCRIPTION);
     *(char**)value = PLUGIN_DESCRIPTION;
     break;
   default:
+    G_DEBUG ("NP_GetValue: Unknown variable");
     ;
   }
 
@@ -210,7 +224,7 @@ NPP_New(NPMIMEType    mimetype,
   PluginData *data;
   GError *error = NULL;
 
-  g_debug ("plugin created");
+  G_DEBUG ("NPP_New: plugin created");
 
   if (!check_origin_and_protocol (instance))
     return NPERR_GENERIC_ERROR;
@@ -238,7 +252,7 @@ NPP_New(NPMIMEType    mimetype,
       return NPERR_GENERIC_ERROR;
     }
 
-  g_debug ("plugin created successfully");
+  G_DEBUG ("NPP_New: plugin created successfully");
 
   return NPERR_NO_ERROR;
 }
@@ -251,7 +265,7 @@ NPP_Destroy(NPP           instance,
 
   PluginData *data = instance->pdata;
 
-  g_debug ("plugin destroyed");
+  G_DEBUG ("NPP_Destroy: plugin destroyed");
 
   g_object_unref (data->proxy);
 
@@ -281,6 +295,9 @@ on_shell_signal (GDBusProxy *proxy,
                  gpointer    user_data)
 {
   PluginObject *obj = user_data;
+
+  G_DEBUG ("on_shell_signal: sender_name = '%s'", sender_name);
+  G_DEBUG ("on_shell_signal: signal_name = '%s'", signal_name);
 
   if (strcmp (signal_name, "ExtensionStatusChanged") == 0)
     {
@@ -312,6 +329,9 @@ on_shell_appeared (GDBusConnection *connection,
 {
   PluginObject *obj = (PluginObject*) user_data;
 
+  G_DEBUG ("on_shell_appeared: name = '%s'", name);
+  G_DEBUG ("on_shell_appeared: name_owner = '%s'", name_owner);
+
   if (obj->restart_listener)
     {
       NPVariant result = { NPVariantType_Void };
@@ -333,6 +353,10 @@ plugin_object_allocate (NPP      instance,
   PluginData *data = instance->pdata;
   PluginObject *obj = g_slice_new0 (PluginObject);
 
+  G_DEBUG ("plugin_object_allocate: instance = %p", instance);
+  G_DEBUG ("plugin_object_allocate: data = %p", data);
+  G_DEBUG ("plugin_object_allocate: obj = %p", obj);
+
   obj->instance = instance;
   obj->proxy = g_object_ref (data->proxy);
   obj->settings = g_settings_new (SHELL_SCHEMA);
@@ -347,7 +371,7 @@ plugin_object_allocate (NPP      instance,
                                          obj,
                                          NULL);
 
-  g_debug ("plugin object created");
+  G_DEBUG ("plugin_object_allocate: plugin object created");
 
   return (NPObject*)obj;
 }
@@ -356,6 +380,8 @@ static void
 plugin_object_deallocate (NPObject *npobj)
 {
   PluginObject *obj = (PluginObject*)npobj;
+
+  G_DEBUG ("plugin_object_deallocate: obj = %p", obj);
 
   g_signal_handler_disconnect (obj->proxy, obj->signal_id);
   g_object_unref (obj->proxy);
@@ -366,7 +392,7 @@ plugin_object_deallocate (NPObject *npobj)
   if (obj->watch_name_id)
     g_bus_unwatch_name (obj->watch_name_id);
 
-  g_debug ("plugin object destroyed");
+  G_DEBUG ("plugin_object_deallocate: plugin object destroyed");
 
   g_slice_free (PluginObject, obj);
 }
@@ -375,6 +401,13 @@ static inline gboolean
 uuid_is_valid (NPString string)
 {
   gsize i;
+  gchar str[100];
+
+  for (i = 0; i < string.UTF8Length; i++)
+    {
+      str[i] = string.UTF8Characters[i];
+    }
+  G_DEBUG ("uuid_is_valid: uuid = %s", str);
 
   for (i = 0; i < string.UTF8Length; i++)
     {
@@ -872,7 +905,7 @@ plugin_object_invoke (NPObject        *npobj,
 {
   PluginObject *obj;
 
-  g_debug ("invoking plugin object method");
+  G_DEBUG ("invoking plugin object method");
 
   obj = (PluginObject*) npobj;
 
@@ -904,6 +937,13 @@ plugin_object_get_property (NPObject     *npobj,
 {
   PluginObject *obj;
 
+  G_DEBUG ("plugin_object_get_property: NPObject = %p", npobj);
+  G_DEBUG ("plugin_object_get_property: name = %p", name);
+  G_DEBUG ("plugin_object_get_property: result = %p", result);
+
+  G_DEBUG ("plugin_object_set_callback: NPVariant result is object = %s", NPVARIANT_IS_OBJECT (*result) ? "YES" : "NO");
+  G_DEBUG ("plugin_object_set_callback: NPVariant result is null = %s", NPVARIANT_IS_NULL (*result) ? "YES" : "NO");
+
   if (!plugin_object_has_property (npobj, name))
     return FALSE;
 
@@ -934,6 +974,10 @@ static bool
 plugin_object_set_callback (NPObject        **listener,
                             const NPVariant  *value)
 {
+  G_DEBUG ("plugin_object_set_callback: listener = %p", *listener);
+  G_DEBUG ("plugin_object_set_callback: NPVariant value is object = %s", NPVARIANT_IS_OBJECT (*value) ? "YES" : "NO");
+  G_DEBUG ("plugin_object_set_callback: NPVariant value is null = %s", NPVARIANT_IS_NULL (*value) ? "YES" : "NO");
+
   if (!NPVARIANT_IS_OBJECT (*value) && !NPVARIANT_IS_NULL (*value))
     return FALSE;
 
@@ -957,13 +1001,24 @@ plugin_object_set_property (NPObject        *npobj,
 {
   PluginObject *obj;
 
+  G_DEBUG ("plugin_object_set_property: NPObject = %p", npobj);
+  G_DEBUG ("plugin_object_set_property: name = %p", name);
+
   obj = (PluginObject *)npobj;
 
   if (name == onextension_changed_id)
-    return plugin_object_set_callback (&obj->listener, value);
+    {
+      G_DEBUG ("plugin_object_set_property: onextension_changed_id");
+      return plugin_object_set_callback (&obj->listener, value);
+    }
 
   if (name == onrestart_id)
-    return plugin_object_set_callback (&obj->restart_listener, value);
+    {
+      G_DEBUG ("plugin_object_set_property: onrestart_id");
+      return plugin_object_set_callback (&obj->restart_listener, value);
+    }
+
+  G_DEBUG ("plugin_object_set_property: unknown name");
 
   return FALSE;
 }
@@ -1008,17 +1063,20 @@ NPP_GetValue(NPP          instance,
 	     NPPVariable  variable,
 	     void        *value)
 {
-  g_debug ("NPP_GetValue called");
+  G_DEBUG ("NPP_GetValue: instance = %p", instance);
+  G_DEBUG ("NPP_GetValue: variable = %u", variable);
+  G_DEBUG ("NPP_GetValue: value = %p", value);
 
   switch (variable) {
   case NPPVpluginScriptableNPObject:
-    g_debug ("creating scriptable object");
+    G_DEBUG ("NPP_GetValue: creating scriptable object");
     init_methods_and_properties ();
 
     *(NPObject**)value = funcs.createobject (instance, &plugin_class);
     break;
 
   case NPPVpluginNeedsXEmbed:
+    G_DEBUG ("NPP_GetValue: return Need-X-Embed at TRUE");
     *(bool *)value = TRUE;
     break;
 
@@ -1035,5 +1093,8 @@ NPError
 NPP_SetWindow(NPP          instance,
               NPWindow    *window)
 {
+  G_DEBUG ("NPP_SetWindow: instance = %p", instance);
+  G_DEBUG ("NPP_SetWindow: window = %p", window);
+
   return NPERR_NO_ERROR;
 }

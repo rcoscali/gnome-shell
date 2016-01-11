@@ -188,6 +188,9 @@ AC_ARG_VAR([MOZILLA_PLUGIN_DIR],[Where to install the plugin to])
 CHROME_PLUGIN_DIR="${CHROME_PLUGIN_DIR:-"/opt/google/chrome"}"
 AC_ARG_VAR([CHROME_PLUGIN_DIR],[Where to install the plugin to])
 
+NACL_SDK_ROOT="${NACL_SDK_ROOT:-"/opt/nacl_sdk"}"
+AC_ARG_VAR([NACL_SDK_ROOT],[Where is installed the NACL SDK])
+
 CHROME_PLUGIN_LIBS="-L\${NACL_SDK_ROOT}/pepper_46/lib/glibc_x86_64/Release -lgmock -lgtest -lsdk_util -lppapi_gles2 -lnacl_io -lppapi_simple"
 AC_ARG_VAR([CHROME_PLUGIN_LIBS],[Libs for chrome plugin ppapi])
 

@@ -26,6 +26,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <glib.h>
+#include <gio/gio.h>
+#include <json-glib/json-glib.h>
+
 #include "ppapi/c/pp_completion_callback.h"
 #include "ppapi/c/pp_errors.h"
 #include "ppapi/c/pp_instance.h"
@@ -57,6 +61,7 @@ static bool false = (0 == 1);
 struct InstanceInfo 
 {
   PP_Instance pp_instance;
+  GDBusProxy *proxy;
   
   struct InstanceInfo* next;
 };
@@ -65,6 +70,102 @@ typedef struct InstanceInfo InstanceInfo;
 
 // Linked list of all live instances.
 InstanceInfo* all_instances = (InstanceInfo*)NULL;
+
+static inline gchar *
+get_string_property (InstanceInfo *instance,
+                     NPObject     *obj,
+                     const char *name)
+{
+  NPVariant result = { NPVariantType_Void };
+  NPString result_str;
+  gchar *result_copy;
+
+  result_copy = NULL;
+
+  if (!funcs.getproperty (instance, obj,
+                          funcs.getstringidentifier (name),
+                          &result))
+    goto out;
+
+  if (!NPVARIANT_IS_STRING (result))
+    goto out;
+
+  result_str = NPVARIANT_TO_STRING (result);
+  result_copy = g_strndup (result_str.UTF8Characters, result_str.UTF8Length);
+
+ out:
+  funcs.releasevariantvalue (&result);
+  return result_copy;
+}
+
+static gboolean
+check_origin_and_protocol (NPP instance)
+{
+  gboolean ret = FALSE;
+  NPError error;
+  NPObject *window = NULL;
+  NPVariant document = { NPVariantType_Void };
+  NPVariant location = { NPVariantType_Void };
+  gchar *hostname = NULL;
+  gchar *protocol = NULL;
+
+  error = funcs.getvalue (instance, NPNVWindowNPObject, &window);
+  if (error != NPERR_NO_ERROR)
+    goto out;
+
+  if (!funcs.getproperty (instance, window,
+                          funcs.getstringidentifier ("document"),
+                          &document))
+    goto out;
+
+  if (!NPVARIANT_IS_OBJECT (document))
+    goto out;
+
+  if (!funcs.getproperty (instance, NPVARIANT_TO_OBJECT (document),
+                          funcs.getstringidentifier ("location"),
+                          &location))
+    goto out;
+
+  if (!NPVARIANT_IS_OBJECT (location))
+    goto out;
+
+  hostname = get_string_property (instance,
+                                  NPVARIANT_TO_OBJECT (location),
+                                  "hostname");
+
+  if (g_strcmp0 (hostname, ORIGIN))
+    {
+      g_debug ("origin does not match, is %s",
+               hostname);
+
+      goto out;
+    }
+
+  protocol = get_string_property (instance,
+                                  NPVARIANT_TO_OBJECT (location),
+                                  "protocol");
+
+  if (g_strcmp0 (protocol, "https:") != 0)
+    {
+      g_debug ("protocol does not match, is %s",
+               protocol);
+
+      goto out;
+    }
+
+  ret = TRUE;
+
+ out:
+  g_free (protocol);
+  g_free (hostname);
+
+  funcs.releasevariantvalue (&location);
+  funcs.releasevariantvalue (&document);
+
+  if (window != NULL)
+    funcs.releaseobject (window);
+  return ret;
+}
 
 /*
  * Returns the info for the given instance, or NULL if it's not found.
@@ -88,11 +189,38 @@ bool
 Instance_New(PP_Instance instance) 
 {
   InstanceInfo* info = (InstanceInfo*)malloc(sizeof(InstanceInfo));
+  if (!info)
+    {
+      fprintf(stderr, "Error: Instance allocation failed\n");
+      return (false);
+    }
   info->pp_instance = instance;
   
+  fprintf(stderr, "Instance_New: plugin created\n");
+
   // Insert into linked list of live instances.
   info->next = all_instances;
   all_instances = info;
+
+  info->proxy = g_dbus_proxy_new_for_bus_sync (G_BUS_TYPE_SESSION,
+                                               G_DBUS_PROXY_FLAGS_NONE,
+                                               NULL, /* interface info */
+                                               "org.gnome.Shell",
+                                               "/org/gnome/Shell",
+                                               "org.gnome.Shell.Extensions",
+                                               NULL, /* GCancellable */
+                                               &error);
+  if (!data->proxy)
+    {
+      /* ignore error if the shell is not running, otherwise warn */
+      if (error->domain != G_DBUS_ERROR ||
+          error->code != G_DBUS_ERROR_NAME_HAS_NO_OWNER)
+        {
+          g_warning ("Failed to set up Shell proxy: %s", error->message);
+        }
+      g_clear_error (&error);
+      return (false);
+    }
 
   return (true);
 }
